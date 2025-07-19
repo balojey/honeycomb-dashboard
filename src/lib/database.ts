@@ -9,16 +9,30 @@ export interface Project {
   updated_at: string;
 }
 
+export interface Wallet {
+  id: string;
+  user_id: string;
+  public_key: string;
+  secret_key: string;
+  created_at: string;
+}
+
 export const projectsService = {
+
   // Create a new project
-  async createProject(name: string, address: string): Promise<Project | null> {
+  async createProject(name: string, address: string): Promise<Project> {
+    const user = (await supabase.auth.getUser()).data.user;
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
     const { data, error } = await supabase
       .from('projects')
       .insert([
         {
           name,
           address,
-          user_id: (await supabase.auth.getUser()).data.user?.id
+          user_id: user.id
         }
       ])
       .select()
@@ -91,5 +105,24 @@ export const projectsService = {
       console.error('Error deleting project:', error);
       throw error;
     }
+  }
+};
+
+export const walletsService = {
+
+  // Get all projects for the current user
+  async getUserWallet(): Promise<Wallet> {
+    const { data, error } = await supabase
+      .from('wallets')
+      .select('*')
+      .eq('user_id', (await supabase.auth.getUser()).data.user?.id)
+      .single();
+
+    if (error) {
+      console.error('Error fetching wallet:', error);
+      throw error;
+    }
+
+    return data || [];
   }
 };
