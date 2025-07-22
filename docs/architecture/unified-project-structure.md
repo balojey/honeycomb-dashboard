@@ -2,14 +2,25 @@
 
 ```plaintext
 honeycomb-dashboard/
-├── apps/
-│   ├── web/      # React + Vite Frontend
-│   └── api/      # Hono BFF
-├── packages/
-│   ├── shared-types/
-│   └── config/
+├── .github/
+│   └── workflows/
+├── app/
+│   ├── client/                 # React + Vite Frontend Application
+│   │   ├── public/
+│   │   └── src/
+│   │       ├── components/
+│   │       ├── features/
+│   │       ├── services/
+│   │       └── ...
+│   ├── server/                 # Hono BFF Application
+│   │   └── src/
+│   │       ├── routes/
+│   │       ├── services/
+│   │       └── index.ts
+│   └── shared/                 # Shared TypeScript interfaces & utilities
+│       └── src/
 ├── infrastructure/
 │   └── Dockerfile
-├── package.json
+├── package.json                # Root package.json with Bun Workspaces
 └── turborepo.json
 ```

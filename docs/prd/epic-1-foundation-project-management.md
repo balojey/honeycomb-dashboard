@@ -7,8 +7,8 @@
 
 **Acceptance Criteria:**
 1.  A monorepo using Bun Workspaces is created.
-2.  A new React + Vite application is scaffolded in the `apps/web` directory.
-3.  A new Hono application is scaffolded in the `apps/api` directory.
+2.  A new React + Vite application is scaffolded in the `app/client` directory.
+3.  A new Hono application is scaffolded in the `app/server` directory.
 4.  Shared TypeScript configuration is set up for the workspace.
 5.  The developer can run both the frontend and backend applications with a single command from the root.
 

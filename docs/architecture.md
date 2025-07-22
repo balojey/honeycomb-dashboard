@@ -26,9 +26,9 @@ This architecture describes a modern, full-stack web application built using the
 * **Structure:** Monorepo
 * **Monorepo Tool:** Turborepo with Bun Workspaces
 * **Package Organization:**
-    * `apps/web`: The Vite/React frontend application.
-    * `apps/api`: The Hono BFF service.
-    * `packages/shared-types`: Shared TypeScript types.
+    * `app/client`: The Vite/React frontend application.
+    * `app/server`: The Hono BFF service.
+    * `app/shared`: Shared TypeScript types.
 
 ### High Level Architecture Diagram
 ```mermaid
@@ -252,15 +252,26 @@ No dedicated database is required for the MVP. All state is managed by the Honey
 
 ```plaintext
 honeycomb-dashboard/
-├── apps/
-│   ├── web/      # React + Vite Frontend
-│   └── api/      # Hono BFF
-├── packages/
-│   ├── shared-types/
-│   └── config/
+├── .github/
+│   └── workflows/
+├── app/
+│   ├── client/                 # React + Vite Frontend Application
+│   │   ├── public/
+│   │   └── src/
+│   │       ├── components/
+│   │       ├── features/
+│   │       ├── services/
+│   │       └── ...
+│   ├── server/                 # Hono BFF Application
+│   │   └── src/
+│   │       ├── routes/
+│   │       ├── services/
+│   │       └── index.ts
+│   └── shared/                 # Shared TypeScript interfaces & utilities
+│       └── src/
 ├── infrastructure/
 │   └── Dockerfile
-├── package.json
+├── package.json                # Root package.json with Bun Workspaces
 └── turborepo.json
 ```
 
@@ -287,7 +298,7 @@ honeycomb-dashboard/
 ## Coding Standards
 
   * **Key Rules:**
-    1.  Always use the `packages/shared-types` for data models.
+    1.  Always use the `app/shared` for data models.
     2.  Frontend must go through the BFF for all API calls.
     3.  Use a config module for environment variables.
     4.  Use global error handling middleware in the BFF.

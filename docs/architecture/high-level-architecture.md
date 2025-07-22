@@ -13,9 +13,9 @@ This architecture describes a modern, full-stack web application built using the
 * **Structure:** Monorepo
 * **Monorepo Tool:** Turborepo with Bun Workspaces
 * **Package Organization:**
-    * `apps/web`: The Vite/React frontend application.
-    * `apps/api`: The Hono BFF service.
-    * `packages/shared-types`: Shared TypeScript types.
+    * `app/client`: The Vite/React frontend application.
+    * `app/server`: The Hono BFF service.
+    * `app/shared`: Shared TypeScript types.
 
 ## High Level Architecture Diagram
 ```mermaid
