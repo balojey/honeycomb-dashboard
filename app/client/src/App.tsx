@@ -2,6 +2,7 @@ import { useState } from 'react'
 import beaver from './assets/beaver.svg'
 import { ApiResponse } from 'shared'
 import { Button } from './components/ui/button'
+import { ConnectWalletButton } from './components/ConnectWalletButton';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL || "http://localhost:3000"
 
@@ -31,6 +32,7 @@ function App() {
       <h2 className="text-2xl font-bold">Bun + Hono + Vite + React</h2>
       <p>A typesafe fullstack monorepo</p>
       <div className='flex items-center gap-4'>
+        <ConnectWalletButton />
         <Button
           onClick={sendRequest}
         >
