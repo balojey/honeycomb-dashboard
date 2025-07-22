@@ -6,18 +6,19 @@
 sequenceDiagram
     participant User
     participant Frontend as React Frontend
+    participant Wallet as User's Wallet
     participant BFF as Hono BFF
     participant HPL_API as Honeycomb API
-    participant AAService as Account Abstraction Service
+
     User->>Frontend: Fills and submits "Create Resource" form
     Frontend->>BFF: POST /api/projects/{id}/resources
     BFF->>HPL_API: createCreateNewResourceTransaction(...)
     HPL_API-->>BFF: Returns serialized transaction
     BFF-->>Frontend: Returns { transaction: "..." }
-    Frontend->>AAService: requestSignature(transaction)
-    AAService-->>User: Prompts user to approve
-    User->>AAService: Approves transaction
-    AAService-->>Frontend: Returns signed transaction
+    Frontend->>Wallet: requestSignature(transaction)
+    Wallet-->>User: Prompts user to approve
+    User->>Wallet: Approves transaction
+    Wallet-->>Frontend: Returns signed transaction
     Frontend->>BFF: (Optional) Send signed TX for submission
     BFF-->>HPL_API: sendTransaction(signedTx)
     HPL_API-->>BFF: Returns confirmation

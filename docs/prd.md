@@ -20,7 +20,7 @@ Honeycomb Protocol provides a powerful GraphQL API to simplify Web3 game develop
 ## Requirements
 
 ### Functional
-1.  **FR1 (Updated)**: A user must be able to sign up or log in using their social account (e.g., Google), which will create and manage an underlying Solana wallet for them via an account abstraction service.
+1.  **FR1 (Reverted)**: A user must be able to connect their Solana wallet to authenticate and log into the dashboard.
 2.  **FR2**: An authenticated user must be able to create a new Honeycomb Project and view a list of projects associated with their wallet's public key.
 3.  **FR3**: A user must be able to view a list of all users and their associated profiles within one of their projects.
 4.  **FR4**: A user must be able to create new resources (both fungible and non-fungible) for a project and mint those resources to a specified user wallet.
@@ -28,7 +28,7 @@ Honeycomb Protocol provides a powerful GraphQL API to simplify Web3 game develop
 
 ### Non-Functional
 1.  **NFR1**: The user interface must be intuitive and responsive, providing a seamless experience on modern desktop browsers.
-2.  **NFR2 (Updated)**: The application must securely manage the embedded wallet solution, ensuring the user has a seamless and safe transaction signing experience.
+2.  **NFR2 (Reverted)**: All interactions with the Honeycomb API and the signing of transactions must be secure, ensuring user keys are never compromised during the wallet connection and transaction approval process.
 3.  **NFR3**: The dashboard must load in under 3 seconds, and user actions should provide immediate visual feedback.
 4.  **NFR4**: The application must be compatible with the latest versions of Chrome, Firefox, and Safari.
 
@@ -93,7 +93,7 @@ Conceptually, the MVP will require the following primary screens:
 
 ## Epic 1: Foundation & Project Management
 
-**Epic Goal**: This epic establishes the complete technical foundation for the dashboard. It ensures the project is properly scaffolded, allows a developer to connect their wallet for authentication, and delivers the first piece of core functionality: the ability to see a list of their existing Honeycomb projects. By the end of this epic, the application will be a functional, connectable, and useful tool.
+**Epic Goal**: This epic establishes the complete technical foundation for the dashboard. It ensures the project is properly scaffolded, enables user authentication via **wallet connection**, and delivers the first piece of core functionality: the ability to see a list of their existing Honeycomb projects.
 
 ### Story 1.1: Project Scaffolding
 **As a** developer, **I want** the initial monorepo structure with frontend and backend applications set up, **so that** I have a clean, organized foundation to start building features on.
@@ -107,21 +107,21 @@ Conceptually, the MVP will require the following primary screens:
 
 ---
 ### Story 1.2 (Updated): Implement Social Login
-**As a** new user, **I want** to sign up or log in using my Google account, **so that** I can access the dashboard without needing a pre-existing Solana wallet.
+**As a** user, **I want** to see a "Connect Wallet" button and a wallet connection modal, **so that** I can authenticate with the application.
 
 **Acceptance Criteria:**
-1.  The main page displays "Login with Google" and other social provider buttons.
-2.  Clicking a social login button initiates the authentication flow with the chosen account abstraction SDK (e.g., Crossmint).
-3.  After successful social authentication, the SDK creates an embedded wallet for the user.
-4.  The application displays the user's email or social handle, indicating they are logged in.
-5.  The application has access to the user's underlying Solana public key for making API calls.
+1.  The main page displays a "Connect Wallet" button when no wallet is connected.
+2.  Clicking the button opens a Solana wallet adapter modal listing compatible wallets.
+3.  Selecting a wallet and approving the connection successfully connects the wallet to the application.
+4.  Once connected, the button's text changes to show the user's truncated wallet address.
+5.  The application stores the connected wallet state for use in subsequent API calls.
 
 ---
 ### Story 1.3: Display Project List
-**As a** user, **I want** to see a list of all my Honeycomb projects after I log in, **so that** I can get an immediate overview of my assets.
+**As a** user, **I want** to see a list of all my Honeycomb projects after I connect my wallet, **so that** I can get an immediate overview of my assets.
 
 **Acceptance Criteria:**
-1.  Upon successful login, the application makes a GraphQL query to the Honeycomb API's `project` endpoint, using the **public key from the embedded wallet** as the `authority`.
+1.  Upon successful wallet connection, the application makes a GraphQL query to the Honeycomb API's `project` endpoint, using the **public key from the connected wallet** as the `authority`.
 2.  If the API call is successful, the dashboard displays a list of projects, showing at least the project name.
 3.  If the user has no projects, a message is displayed indicating "No projects found."
 4.  If the API call fails, a user-friendly error message is displayed.

@@ -1,4 +1,4 @@
 # External APIs
 
-  * **Honeycomb Protocol GraphQL API:** The core external service providing all blockchain functionality.
-  * **Crossmint:** The account abstraction service used for social login and embedded wallet management.
+  * **Honeycomb Protocol GraphQL API:**
+      * **Purpose:** This is the primary, core API that provides all of the dashboard's functionality.

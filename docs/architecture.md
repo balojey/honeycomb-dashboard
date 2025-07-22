@@ -14,7 +14,7 @@ The project will be built using a standard, high-quality monorepo starter templa
 ## High Level Architecture
 
 ### Technical Summary
-This architecture describes a modern, full-stack web application built using the BHVR (Bun, Hono, Vite, React) stack within a monorepo structure. The system features a responsive React frontend that communicates with a lightweight Hono Backend-for-Frontend (BFF). User authentication is handled via a social login/account abstraction service, which creates and manages user wallets. The entire application is designed to be deployed as containerized services on a modern cloud platform, interacting directly with the external Honeycomb Protocol GraphQL API.
+This architecture describes a modern, full-stack web application built using the BHVR (Bun, Hono, Vite, React) stack within a monorepo structure. The system features a responsive React frontend that communicates with a lightweight Hono Backend-for-Frontend (BFF). User authentication is handled via a **direct Solana wallet connection**, interacting with the external Honeycomb Protocol GraphQL API.
 
 ### Platform and Infrastructure Choice
 * **Platform:** **Fly.io** is recommended for its excellent developer experience in deploying containerized applications with support for Bun.
@@ -34,10 +34,10 @@ This architecture describes a modern, full-stack web application built using the
 ```mermaid
 graph TD
     User --> Browser[React/Vite Frontend on Fly.io];
-    Browser --> AAService[Account Abstraction Service e.g., Crossmint];
+    Browser <--> Wallet[User's Solana Wallet e.g., Phantom];
     Browser --> BFF[Hono BFF on Fly.io];
     BFF --> HPL_API[Honeycomb Protocol GraphQL API];
-````
+```
 
 ### Architectural Patterns
 
@@ -59,7 +59,7 @@ graph TD
 | **Backend Language** | TypeScript | `~5.5` | Statically typed language for backend code. | Ensures type consistency across the full stack. |
 | **Backend Framework** | Hono | `~4.4` | Fast, lightweight web framework for the BFF. | Chosen as part of the core BHVR stack. |
 | **API Style** | GraphQL Client | `~17.0` | Query language for the client to interact with HPL API. | The Honeycomb Protocol API is GraphQL-based. |
-| **Authentication** | Crossmint | `~2.0` | Account abstraction and embedded wallets. | Fulfills the requirement for social logins. |
+| **Authentication** | Solana Wallet Adapter| `~1.2` | Solana wallet connection and transaction signing. | Standard library for integrating wallets into a React app. |
 | **Frontend Testing**| Vitest + RTL | `~1.6` | Unit and component testing for the frontend. | Natively integrates with Vite for a fast testing experience. |
 | **Backend Testing** | Vitest | `~1.6` | Unit and integration testing for the backend. | Bun has native support for Vitest. |
 | **E2E Testing** | Playwright | `~1.45`| End-to-end testing for the entire application. | A modern and reliable tool for cross-browser E2E testing. |
@@ -192,7 +192,8 @@ paths:
 
 ### Component List
 
-  * **Authentication Service (Frontend/Backend):** Manages user session via Crossmint SDK.
+  * **Authentication Service (Frontend):**
+      * **Responsibility:** Manages user authentication via the Solana Wallet Adapter. It will handle the wallet connection flow, provide the application with the user's public key, and request transaction signatures from the user's wallet.
   * **Honeycomb API Client (Backend):** Handles all communication with the Honeycomb GraphQL API.
   * **BFF API Layer (Backend):** Implements the RESTful API for the frontend using Hono.
   * **Project Management UI (Frontend):** The main dashboard "hub" components.
@@ -200,8 +201,8 @@ paths:
 
 ## External APIs
 
-  * **Honeycomb Protocol GraphQL API:** The core external service providing all blockchain functionality.
-  * **Crossmint:** The account abstraction service used for social login and embedded wallet management.
+  * **Honeycomb Protocol GraphQL API:**
+      * **Purpose:** This is the primary, core API that provides all of the dashboard's functionality.
 
 ## Core Workflows
 
@@ -211,18 +212,19 @@ paths:
 sequenceDiagram
     participant User
     participant Frontend as React Frontend
+    participant Wallet as User's Wallet
     participant BFF as Hono BFF
     participant HPL_API as Honeycomb API
-    participant AAService as Account Abstraction Service
+
     User->>Frontend: Fills and submits "Create Resource" form
     Frontend->>BFF: POST /api/projects/{id}/resources
     BFF->>HPL_API: createCreateNewResourceTransaction(...)
     HPL_API-->>BFF: Returns serialized transaction
     BFF-->>Frontend: Returns { transaction: "..." }
-    Frontend->>AAService: requestSignature(transaction)
-    AAService-->>User: Prompts user to approve
-    User->>AAService: Approves transaction
-    AAService-->>Frontend: Returns signed transaction
+    Frontend->>Wallet: requestSignature(transaction)
+    Wallet-->>User: Prompts user to approve
+    User->>Wallet: Approves transaction
+    Wallet-->>Frontend: Returns signed transaction
     Frontend->>BFF: (Optional) Send signed TX for submission
     BFF-->>HPL_API: sendTransaction(signedTx)
     HPL_API-->>BFF: Returns confirmation

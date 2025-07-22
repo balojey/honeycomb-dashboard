@@ -11,7 +11,7 @@
 | **Backend Language** | TypeScript | `~5.5` | Statically typed language for backend code. | Ensures type consistency across the full stack. |
 | **Backend Framework** | Hono | `~4.4` | Fast, lightweight web framework for the BFF. | Chosen as part of the core BHVR stack. |
 | **API Style** | GraphQL Client | `~17.0` | Query language for the client to interact with HPL API. | The Honeycomb Protocol API is GraphQL-based. |
-| **Authentication** | Crossmint | `~2.0` | Account abstraction and embedded wallets. | Fulfills the requirement for social logins. |
+| **Authentication** | Solana Wallet Adapter| `~1.2` | Solana wallet connection and transaction signing. | Standard library for integrating wallets into a React app. |
 | **Frontend Testing**| Vitest + RTL | `~1.6` | Unit and component testing for the frontend. | Natively integrates with Vite for a fast testing experience. |
 | **Backend Testing** | Vitest | `~1.6` | Unit and integration testing for the backend. | Bun has native support for Vitest. |
 | **E2E Testing** | Playwright | `~1.45`| End-to-end testing for the entire application. | A modern and reliable tool for cross-browser E2E testing. |
