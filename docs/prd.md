@@ -1,0 +1,201 @@
+# Honeycomb Protocol Dashboard Product Requirements Document (PRD)
+
+## Goals and Background Context
+
+### Goals
+* Increase the adoption and retention of the Honeycomb Protocol.
+* Reduce the time-to-market for developers building with Honeycomb.
+* Enable developers to create a project, define a resource, and mint it in under 5 minutes.
+* Decrease the volume of API-related support questions.
+
+### Background Context
+Honeycomb Protocol provides a powerful GraphQL API to simplify Web3 game development on Solana. However, developers currently lack a graphical interface for managing their projects, requiring them to build their own admin panels or interact directly with the API. This project will create the **Honeycomb Protocol Dashboard (or Hive Control)** to provide a user-friendly, web-based GUI. This will lower the barrier to entry, streamline project management, and accelerate development for game developers using the protocol.
+
+### Change Log
+| Date | Version | Description | Author |
+| --- | --- | --- | --- |
+| 2025-07-22 | 1.1 | Updated auth to social login per user feedback. | John, PM |
+| 2025-07-21 | 1.0 | Initial PRD draft | John, PM |
+
+## Requirements
+
+### Functional
+1.  **FR1 (Updated)**: A user must be able to sign up or log in using their social account (e.g., Google), which will create and manage an underlying Solana wallet for them via an account abstraction service.
+2.  **FR2**: An authenticated user must be able to create a new Honeycomb Project and view a list of projects associated with their wallet's public key.
+3.  **FR3**: A user must be able to view a list of all users and their associated profiles within one of their projects.
+4.  **FR4**: A user must be able to create new resources (both fungible and non-fungible) for a project and mint those resources to a specified user wallet.
+5.  **FR5**: A user must be able to create new character models for a project, defining them as either "Wrapped" from existing NFTs or "Assembled" as native characters.
+
+### Non-Functional
+1.  **NFR1**: The user interface must be intuitive and responsive, providing a seamless experience on modern desktop browsers.
+2.  **NFR2 (Updated)**: The application must securely manage the embedded wallet solution, ensuring the user has a seamless and safe transaction signing experience.
+3.  **NFR3**: The dashboard must load in under 3 seconds, and user actions should provide immediate visual feedback.
+4.  **NFR4**: The application must be compatible with the latest versions of Chrome, Firefox, and Safari.
+
+## User Interface Design Goals
+
+### Overall UX Vision
+The dashboard's user experience should prioritize **clarity, efficiency, and utility**. It is a professional tool for developers, so the design should be clean, data-dense, and predictable. The primary goal is to empower users to manage their projects quickly and confidently with minimal friction.
+
+### Key Interaction Paradigms
+The interface will follow established dashboard conventions:
+* A persistent left-hand navigation menu for major sections.
+* A main content area for displaying data tables, forms, and lists.
+* Modal dialogs for critical actions like creation or confirmation.
+* Clear breadcrumbs for easy navigation within nested views.
+
+### Core Screens and Views
+Conceptually, the MVP will require the following primary screens:
+* **Login/Connect Wallet Screen**: A simple page to connect a Solana wallet.
+* **Projects Dashboard**: The main landing page after login, listing all of the user's projects.
+* **Project View**: A detailed view for a single project, acting as a container for managing its users, resources, and characters.
+* **Resource Management Page**: An interface to view, create, and mint resources.
+* **Character Model Page**: An interface to view and create new character models.
+
+### Accessibility
+* **Standard**: WCAG AA
+
+### Branding
+* The initial design will use a clean, professional, and neutral "developer tool" aesthetic. If a specific brand guide or color palette for Honeycomb Protocol exists, it should be provided.
+
+### Target Device and Platforms
+* Web Responsive
+
+## Technical Assumptions
+
+### Repository Structure
+* **Recommendation**: Monorepo
+    * **Rationale**: A monorepo will simplify development by allowing the React/Vite frontend and the Hono backend to share code, especially type definitions for the Honeycomb API.
+
+### Service Architecture
+* **Recommendation**: Monolith (specifically a Backend-for-Frontend pattern)
+    * **Rationale**: The core logic resides in the Honeycomb Protocol. The Hono backend will act as a simple and highly performant BFF, perfectly suited for serving the frontend without unnecessary complexity.
+
+### Testing Requirements
+* **Recommendation**: Unit + Integration
+    * **Rationale**: This ensures individual components work as expected (unit tests) and that the dashboard correctly interacts with the live Honeycomb API (integration tests), providing a good balance of speed and confidence.
+
+### Additional Technical Assumptions and Requests
+* The frontend will be built using **React** and the **Vite** toolchain for a fast development experience.
+* The backend API server will be built with **Hono**.
+* The entire application will use the **Bun** runtime for superior performance.
+* **User authentication will be handled by an account abstraction SDK (e.g., Crossmint), replacing the need for a traditional user-managed wallet adapter.**
+* Deployment will be to a platform that supports the Bun runtime (e.g., Docker container on AWS/GCP, Fly.io). The final choice will be determined by the Architect.
+
+## Epic List
+
+* **Epic 1: Foundation & Project Management**
+    * **Goal**: Establish the core application infrastructure, enable user authentication via social login, and allow users to create and view their projects.
+* **Epic 2: User and Profile Viewing**
+    * **Goal**: Provide developers with the ability to view the users and their associated profiles within their projects, offering essential read-only insights.
+* **Epic 3: Core Asset Management**
+    * **Goal**: Implement the primary creation functionalities of the dashboard, allowing developers to define and mint new Resources and Character Models for their games.
+
+## Epic 1: Foundation & Project Management
+
+**Epic Goal**: This epic establishes the complete technical foundation for the dashboard. It ensures the project is properly scaffolded, allows a developer to connect their wallet for authentication, and delivers the first piece of core functionality: the ability to see a list of their existing Honeycomb projects. By the end of this epic, the application will be a functional, connectable, and useful tool.
+
+### Story 1.1: Project Scaffolding
+**As a** developer, **I want** the initial monorepo structure with frontend and backend applications set up, **so that** I have a clean, organized foundation to start building features on.
+
+**Acceptance Criteria:**
+1.  A monorepo using Bun Workspaces is created.
+2.  A new React + Vite application is scaffolded in the `apps/web` directory.
+3.  A new Hono application is scaffolded in the `apps/api` directory.
+4.  Shared TypeScript configuration is set up for the workspace.
+5.  The developer can run both the frontend and backend applications with a single command from the root.
+
+---
+### Story 1.2 (Updated): Implement Social Login
+**As a** new user, **I want** to sign up or log in using my Google account, **so that** I can access the dashboard without needing a pre-existing Solana wallet.
+
+**Acceptance Criteria:**
+1.  The main page displays "Login with Google" and other social provider buttons.
+2.  Clicking a social login button initiates the authentication flow with the chosen account abstraction SDK (e.g., Crossmint).
+3.  After successful social authentication, the SDK creates an embedded wallet for the user.
+4.  The application displays the user's email or social handle, indicating they are logged in.
+5.  The application has access to the user's underlying Solana public key for making API calls.
+
+---
+### Story 1.3: Display Project List
+**As a** user, **I want** to see a list of all my Honeycomb projects after I log in, **so that** I can get an immediate overview of my assets.
+
+**Acceptance Criteria:**
+1.  Upon successful login, the application makes a GraphQL query to the Honeycomb API's `project` endpoint, using the **public key from the embedded wallet** as the `authority`.
+2.  If the API call is successful, the dashboard displays a list of projects, showing at least the project name.
+3.  If the user has no projects, a message is displayed indicating "No projects found."
+4.  If the API call fails, a user-friendly error message is displayed.
+
+## Epic 2: User and Profile Viewing
+
+**Epic Goal**: This epic builds on the foundation of Epic 1 by allowing a developer to select one of their projects and view the associated users and profiles. This provides crucial, read-only insights for community management, user support, and understanding player data. It transforms the dashboard from a simple project lister into a valuable monitoring tool.
+
+### Story 2.1: Project Navigation
+**As a** user, **I want** to click on a project from my project list and be taken to a dedicated project detail page, **so that** I can access management features for that specific project.
+
+**Acceptance Criteria:**
+1.  Each project in the list (from Story 1.3) is a clickable link.
+2.  Clicking a project link navigates the user to a new view/page (e.g., `/project/{projectAddress}`).
+3.  The new page clearly displays the name of the selected project as a title.
+4.  The page contains a designated area for displaying the list of users and profiles.
+
+---
+### Story 2.2: Display User and Profile List
+**As a** user, **I want** to see a list of all users and their profiles for the selected project, **so that** I can see who is playing my game.
+
+**Acceptance Criteria:**
+1.  When the project detail page loads, a GraphQL query is made to the Honeycomb API's `profile` endpoint, filtering by the `project` address from the URL.
+2.  The returned data is displayed in a table or list format.
+3.  The table displays key profile information, such as User ID, a truncated Profile Address, and any available `info` (name, pfp).
+4.  If a project has no user profiles, a message like "No profiles found for this project" is displayed.
+5.  If the API call fails, a user-friendly error message is shown.
+
+## Epic 3: Core Asset Management
+
+**Epic Goal**: This epic transforms the dashboard from a read-only tool into an active management platform. It will implement the primary "write" functionalities, allowing developers to create and manage the fundamental building blocks of their game economies: Resources and Characters. Completing this epic provides the highest value to the end-user, enabling them to define, create, and distribute on-chain assets directly from the UI.
+
+### Story 3.1: Create New Resource
+**As a** developer, **I want** a form to define and create a new game resource, **so that** I can establish the basic assets for my game's economy.
+
+**Acceptance Criteria:**
+1.  On the project detail page, there is a "Create Resource" button.
+2.  Clicking the button opens a form or modal with fields for Name, Symbol, Decimals, URI, and Storage type (`AccountState` or `LedgerState`).
+3.  The form includes client-side validation for all required fields.
+4.  Submitting the form constructs the correct payload for the `createCreateNewResourceTransaction` GraphQL mutation.
+5.  The user is prompted to sign the transaction with their connected wallet.
+6.  Upon successful transaction, the user sees a confirmation message, and the new resource appears in a list of project resources.
+7.  If the transaction fails, a user-friendly error message is displayed.
+
+---
+### Story 3.2: Mint Resource
+**As a** developer, **I want** to mint a specific amount of a created resource to a user's wallet, **so that** I can distribute assets or rewards to my players.
+
+**Acceptance Criteria:**
+1.  Each resource in the project's resource list has a "Mint" action/button.
+2.  Clicking "Mint" opens a modal prompting for an `amount` and a recipient `owner` wallet address.
+3.  The form validates that the amount is a valid number and the owner is a valid Solana public key.
+4.  Submitting the form uses the `createMintResourceTransaction` GraphQL mutation.
+5.  The user is prompted to sign the transaction.
+6.  Upon successful transaction, a confirmation message is displayed.
+
+---
+### Story 3.3: Create Character Model
+**As a** developer, **I want** a form to define a new character model, **so that** I can set up the templates for in-game characters or NFTs.
+
+**Acceptance Criteria:**
+1.  On the project detail page, there is a "Create Character Model" button.
+2.  The form allows the user to select a configuration `kind`: "Wrapped" or "Assembled".
+3.  If "Wrapped" is selected, the form provides fields to define the `criterias` for wrapping (e.g., by Merkle Tree, Collection, or Creator).
+4.  If "Assembled" is selected, the form provides fields to input the `assemblerConfigInput`.
+5.  Submitting the form uses the `createCreateCharacterModelTransaction` GraphQL mutation with the correct payload.
+6.  The user is prompted to sign the transaction, and appropriate success/error feedback is provided.
+
+---
+### Story 3.4: Display Character Models
+**As a** developer, **I want** to see a list of the character models I've created for a project, **so that** I can track and manage my game's character templates.
+
+**Acceptance Criteria:**
+1.  The project detail page has a section for Character Models.
+2.  This section makes a GraphQL query to the `characterModel` endpoint, filtered by the project address.
+3.  A list or table displays the created character models, showing their address and configuration kind ("Wrapped" or "Assembled").
+4.  If no models exist, a message indicating this is shown.
