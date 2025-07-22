@@ -58,7 +58,7 @@ graph TD
 | **State Management** | Zustand | `~4.5` | Lightweight global state management. | Simple, unopinionated, and avoids boilerplate. |
 | **Backend Language** | TypeScript | `~5.5` | Statically typed language for backend code. | Ensures type consistency across the full stack. |
 | **Backend Framework** | Hono | `~4.4` | Fast, lightweight web framework for the BFF. | Chosen as part of the core BHVR stack. |
-| **API Style** | GraphQL Client | `~17.0` | Query language for the client to interact with HPL API. | The Honeycomb Protocol API is GraphQL-based. |
+| **Honeycomb Client Lib**| `@honeycomb-protocol/edge-client`| `~0.1.3`| SDK for interacting with the Honeycomb API. | The official, robust, and maintained method for API communication. |
 | **Authentication** | Solana Wallet Adapter| `~1.2` | Solana wallet connection and transaction signing. | Standard library for integrating wallets into a React app. |
 | **Frontend Testing**| Vitest + RTL | `~1.6` | Unit and component testing for the frontend. | Natively integrates with Vite for a fast testing experience. |
 | **Backend Testing** | Vitest | `~1.6` | Unit and integration testing for the backend. | Bun has native support for Vitest. |
@@ -194,7 +194,10 @@ paths:
 
   * **Authentication Service (Frontend):**
       * **Responsibility:** Manages user authentication via the Solana Wallet Adapter. It will handle the wallet connection flow, provide the application with the user's public key, and request transaction signatures from the user's wallet.
-  * **Honeycomb API Client (Backend):** Handles all communication with the Honeycomb GraphQL API.
+  * **Honeycomb API Client (Backend):**
+      * **Responsibility:** This module will be a thin wrapper around the `@honeycomb-protocol/edge-client`. It will initialize the client and expose its methods (e.g., `createCreateNewResourceTransaction`, `findProjects`) to the rest of the BFF. It will be responsible for handling the direct interaction with the Honeycomb Protocol.
+      * **Key Interfaces:** `client.createCreateNewResourceTransaction(...)`, `client.findProjects(...)`
+      * **Dependencies:** `@honeycomb-protocol/edge-client`
   * **BFF API Layer (Backend):** Implements the RESTful API for the frontend using Hono.
   * **Project Management UI (Frontend):** The main dashboard "hub" components.
   * **Asset Management UI (Frontend):** The components for the individual management "spokes" (Resources, Characters, etc.).
@@ -212,23 +215,27 @@ paths:
 sequenceDiagram
     participant User
     participant Frontend as React Frontend
-    participant Wallet as User's Wallet
     participant BFF as Hono BFF
+    participant JS_Client as Honeycomb JS Client
     participant HPL_API as Honeycomb API
 
     User->>Frontend: Fills and submits "Create Resource" form
     Frontend->>BFF: POST /api/projects/{id}/resources
-    BFF->>HPL_API: createCreateNewResourceTransaction(...)
-    HPL_API-->>BFF: Returns serialized transaction
+    BFF->>JS_Client: client.createCreateNewResourceTransaction(...)
+    JS_Client->>HPL_API: (Handles GraphQL Mutation)
+    HPL_API-->>JS_Client: Returns serialized transaction
+    JS_Client-->>BFF: Returns transaction object
     BFF-->>Frontend: Returns { transaction: "..." }
+    
+    %% Signing flow remains the same %%
     Frontend->>Wallet: requestSignature(transaction)
     Wallet-->>User: Prompts user to approve
     User->>Wallet: Approves transaction
     Wallet-->>Frontend: Returns signed transaction
-    Frontend->>BFF: (Optional) Send signed TX for submission
-    BFF-->>HPL_API: sendTransaction(signedTx)
-    HPL_API-->>BFF: Returns confirmation
-    BFF-->>Frontend: Returns { success: true }
+    Frontend->>JS_Client: client.sendTransaction(...)
+    JS_Client->>HPL_API: (Handles Transaction Submission)
+    HPL_API-->>JS_Client: Returns confirmation
+    JS_Client-->>Frontend: Returns confirmation
     Frontend-->>User: Displays success message
 ```
 
