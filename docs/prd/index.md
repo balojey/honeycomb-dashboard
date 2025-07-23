@@ -27,6 +27,7 @@
     - [Story 1.1: Project Scaffolding](./epic-1-foundation-project-management.md#story-11-project-scaffolding)
     - [Story 1.2 (Updated): Implement Social Login](./epic-1-foundation-project-management.md#story-12-updated-implement-social-login)
     - [Story 1.3: Display Project List](./epic-1-foundation-project-management.md#story-13-display-project-list)
+    - [Story 1.4: Create New Project](./epic-1-foundation-project-management.md#story-14-create-new-project)
   - [Epic 2: User and Profile Viewing](./epic-2-user-and-profile-viewing.md)
     - [Story 2.1: Project Navigation](./epic-2-user-and-profile-viewing.md#story-21-project-navigation)
     - [Story 2.2: Display User and Profile List](./epic-2-user-and-profile-viewing.md#story-22-display-user-and-profile-list)

@@ -32,3 +32,16 @@
 2.  If the API call is successful, the dashboard displays a list of projects, showing at least the project name.
 3.  If the user has no projects, a message is displayed indicating "No projects found."
 4.  If the API call fails, a user-friendly error message is displayed.
+
+---
+## **Story 1.4: Create New Project**
+**As a** user, **I want** a "Create Project" button and a form to provide a project name, **so that** I can initialize a new project on the Honeycomb Protocol.
+
+**Acceptance Criteria:**
+1.  The Projects Dashboard displays a "Create New Project" button.
+2.  Clicking the button opens a form or modal prompting for a "Project Name".
+3.  The form includes client-side validation for the name field.
+4.  Submitting the form initiates the `createCreateProjectTransaction` process via the BFF.
+5.  The user is prompted by their connected wallet to sign and approve the creation transaction.
+6.  Upon successful confirmation, the project list is refreshed to show the newly created project.
+7.  If the transaction fails, a user-friendly error message is displayed.
