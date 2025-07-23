@@ -21,3 +21,20 @@ export const fetchProjects = async (authorityPublicKey: PublicKey) => {
     throw new Error('Failed to fetch projects');
   }
 };
+
+export const createCreateProjectTransaction = async (
+  projectName: string,
+  authorityPublicKey: PublicKey
+) => {
+  try {
+    const { createCreateProjectTransaction: { tx: txResponse } } = await client.createCreateProjectTransaction({
+      name: projectName,
+      authority: authorityPublicKey.toString(),
+      payer: authorityPublicKey.toString(),
+    });
+    return txResponse;
+  } catch (error) {
+    console.error('Error preparing create project transaction:', error);
+    throw new Error('Failed to prepare create project transaction');
+  }
+};
