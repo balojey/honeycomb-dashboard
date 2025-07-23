@@ -21,6 +21,9 @@ paths:
   /projects/{projectId}/resources:
     post:
       summary: Create a New Resource
+  /projects/{projectId}/resources/{resourceId}/tree:
+    post:
+      summary: Create a Resource Tree for a LedgerState Resource
   /projects/{projectId}/resources/{resourceId}/mint:
     post:
       summary: Mint a Resource

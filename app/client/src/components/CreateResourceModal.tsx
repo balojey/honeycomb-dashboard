@@ -79,7 +79,7 @@ export const CreateResourceModal: React.FC<CreateResourceModalProps> = ({ isOpen
         decimals: Number(decimals),
         uri,
         storageType,
-      } as Omit<CreateResourceRequest, 'authority'>;
+      }
 
       const { tx } = await createResource(projectId, resourceData, wallet.publicKey.toString());
       await sendClientTransactions(client, wallet, tx);

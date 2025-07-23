@@ -77,3 +77,39 @@ export const fetchProfilesForProject = async (projectPublicKey: PublicKey) => {
     throw new Error('Failed to fetch profiles');
   }
 }
+
+export const createMintResourceTransaction = async (
+  resourceId: string,
+  amount: number,
+  owner: string,
+  authority: string,
+) => {
+  console.log('Preparing mint resource transaction for resource:', resourceId, 'with amount:', String(amount), 'and owner:', owner);
+  try {
+    const { createMintResourceTransaction: txResponse } = await client.createMintResourceTransaction({
+      resource: resourceId,
+      amount: String(amount),
+      owner: owner,
+      authority: authority,
+      payer: authority,
+    });
+    console.log('Prepared mint resource transaction:', txResponse);
+    return txResponse;
+  } catch (error) {
+    console.error('Error preparing mint resource transaction:', error);
+    throw new Error('Failed to prepare mint resource transaction');
+  }
+}
+
+export const fetchResourcesForProject = async (projectPublicKey: PublicKey) => {
+  try {
+    const { resources: resources } = await client.findResources({
+      projects: [projectPublicKey.toString()],
+    });
+    console.log('Fetched resources:', resources);
+    return resources;
+  } catch (error) {
+    console.error('Error fetching resources:', error);
+    throw new Error('Failed to fetch resources');
+  }
+}

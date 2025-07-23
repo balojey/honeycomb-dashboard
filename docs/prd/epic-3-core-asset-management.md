@@ -15,6 +15,17 @@
 7.  If the transaction fails, a user-friendly error message is displayed.
 
 ---
+## Story 3.1.1: Create Resource Tree
+**As a** developer, **I want** to create a resource tree for my `LedgerState` resource, **so that** I can store its ownership and usage information on-chain.
+
+**Acceptance Criteria:**
+1.  After successfully creating a `LedgerState` resource, the UI presents an option to "Create Resource Tree".
+2.  Clicking the button initiates the `createCreateNewResourceTreeTransaction` process via the BFF.
+3.  The user is prompted by their connected wallet to sign and approve the transaction.
+4.  Upon successful confirmation, the user sees a success message.
+5.  Resources of type `AccountState` should not present this option.
+
+---
 ## Story 3.2: Mint Resource
 **As a** developer, **I want** to mint a specific amount of a created resource to a user's wallet, **so that** I can distribute assets or rewards to my players.
 

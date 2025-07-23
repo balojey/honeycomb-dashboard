@@ -33,6 +33,7 @@
     - [Story 2.2: Display User and Profile List](./epic-2-user-and-profile-viewing.md#story-22-display-user-and-profile-list)
   - [Epic 3: Core Asset Management](./epic-3-core-asset-management.md)
     - [Story 3.1: Create New Resource](./epic-3-core-asset-management.md#story-31-create-new-resource)
+    - [Story 3.1.1: Create Resource Tree](./epic-3-core-asset-management.md#story-311-create-resource-tree)
     - [Story 3.2: Mint Resource](./epic-3-core-asset-management.md#story-32-mint-resource)
     - [Story 3.3: Create Character Model](./epic-3-core-asset-management.md#story-33-create-character-model)
     - [Story 3.4: Display Character Models](./epic-3-core-asset-management.md#story-34-display-character-models)

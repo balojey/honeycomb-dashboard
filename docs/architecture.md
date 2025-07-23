@@ -1,36 +1,44 @@
 # Honeycomb Protocol Dashboard Fullstack Architecture Document
 
 ## Introduction
+
 This document outlines the complete fullstack architecture for the Honeycomb Protocol Dashboard, including backend systems, frontend implementation, and their integration. It serves as the single source of truth for AI-driven development, ensuring consistency across the entire technology stack.
 
 ### Starter Template or Existing Project
+
 The project will be built using a standard, high-quality monorepo starter template (e.g., one using Bun Workspaces with Turborepo) to accelerate setup and enforce best practices for the selected BHVR (Bun, Hono, Vite, React) stack.
 
 ### Change Log
+
 | Date | Version | Description | Author |
 | --- | --- | --- | --- |
+| 2025-07-23 | 1.1 | Added resource tree creation workflow for LedgerState resources. | Sarah, PO |
 | 2025-07-22 | 1.0 | Initial architecture draft | Winston, Architect |
 
 ## High Level Architecture
 
 ### Technical Summary
+
 This architecture describes a modern, full-stack web application built using the BHVR (Bun, Hono, Vite, React) stack within a monorepo structure. The system features a responsive React frontend that communicates with a lightweight Hono Backend-for-Frontend (BFF). User authentication is handled via a **direct Solana wallet connection**, interacting with the external Honeycomb Protocol GraphQL API.
 
 ### Platform and Infrastructure Choice
-* **Platform:** **Fly.io** is recommended for its excellent developer experience in deploying containerized applications with support for Bun.
-* **Key Services:**
-    * **Web App Service**: For hosting the Vite/React static frontend.
-    * **API Service**: For running the Hono BFF.
+
+  * **Platform:** **Fly.io** is recommended for its excellent developer experience in deploying containerized applications with support for Bun.
+  * **Key Services:**
+      * **Web App Service**: For hosting the Vite/React static frontend.
+      * **API Service**: For running the Hono BFF.
 
 ### Repository Structure
-* **Structure:** Monorepo
-* **Monorepo Tool:** Turborepo with Bun Workspaces
-* **Package Organization:**
-    * `app/client`: The Vite/React frontend application.
-    * `app/server`: The Hono BFF service.
-    * `app/shared`: Shared TypeScript types.
+
+  * **Structure:** Monorepo
+  * **Monorepo Tool:** Turborepo with Bun Workspaces
+  * **Package Organization:**
+      * `app/client`: The Vite/React frontend application.
+      * `app/server`: The Hono BFF service.
+      * `app/shared`: Shared TypeScript types.
 
 ### High Level Architecture Diagram
+
 ```mermaid
 graph TD
     User --> Browser[React/Vite Frontend on Fly.io];
@@ -178,6 +186,9 @@ paths:
   /projects/{projectId}/resources:
     post:
       summary: Create a New Resource
+  /projects/{projectId}/resources/{resourceId}/tree:
+    post:
+      summary: Create a Resource Tree for a LedgerState Resource
   /projects/{projectId}/resources/{resourceId}/mint:
     post:
       summary: Mint a Resource
@@ -216,27 +227,28 @@ sequenceDiagram
     participant User
     participant Frontend as React Frontend
     participant BFF as Hono BFF
-    participant JS_Client as Honeycomb JS Client
     participant HPL_API as Honeycomb API
 
     User->>Frontend: Fills and submits "Create Resource" form
     Frontend->>BFF: POST /api/projects/{id}/resources
-    BFF->>JS_Client: client.createCreateNewResourceTransaction(...)
-    JS_Client->>HPL_API: (Handles GraphQL Mutation)
-    HPL_API-->>JS_Client: Returns serialized transaction
-    JS_Client-->>BFF: Returns transaction object
+    BFF->>HPL_API: createCreateNewResourceTransaction(...)
+    HPL_API-->>BFF: Returns serialized transaction
     BFF-->>Frontend: Returns { transaction: "..." }
     
-    %% Signing flow remains the same %%
-    Frontend->>Wallet: requestSignature(transaction)
-    Wallet-->>User: Prompts user to approve
-    User->>Wallet: Approves transaction
-    Wallet-->>Frontend: Returns signed transaction
-    Frontend->>JS_Client: client.sendTransaction(...)
-    JS_Client->>HPL_API: (Handles Transaction Submission)
-    HPL_API-->>JS_Client: Returns confirmation
-    JS_Client-->>Frontend: Returns confirmation
-    Frontend-->>User: Displays success message
+    User->>Frontend: Signs transaction via Wallet
+    Frontend->>HPL_API: Submits signed transaction
+    HPL_API-->>Frontend: Confirmation
+    
+    alt If Resource is LedgerState
+        User->>Frontend: Clicks "Create Resource Tree"
+        Frontend->>BFF: POST /api/projects/{id}/resources/{id}/tree
+        BFF->>HPL_API: createCreateNewResourceTreeTransaction(...)
+        HPL_API-->>BFF: Returns serialized transaction
+        BFF-->>Frontend: Returns { transaction: "..." }
+        User->>Frontend: Signs transaction via Wallet
+        Frontend->>HPL_API: Submits signed transaction
+        HPL_API-->>Frontend: Confirmation
+    end
 ```
 
 ## Database Schema

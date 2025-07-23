@@ -7,25 +7,26 @@ sequenceDiagram
     participant User
     participant Frontend as React Frontend
     participant BFF as Hono BFF
-    participant JS_Client as Honeycomb JS Client
     participant HPL_API as Honeycomb API
 
     User->>Frontend: Fills and submits "Create Resource" form
     Frontend->>BFF: POST /api/projects/{id}/resources
-    BFF->>JS_Client: client.createCreateNewResourceTransaction(...)
-    JS_Client->>HPL_API: (Handles GraphQL Mutation)
-    HPL_API-->>JS_Client: Returns serialized transaction
-    JS_Client-->>BFF: Returns transaction object
+    BFF->>HPL_API: createCreateNewResourceTransaction(...)
+    HPL_API-->>BFF: Returns serialized transaction
     BFF-->>Frontend: Returns { transaction: "..." }
     
-    %% Signing flow remains the same %%
-    Frontend->>Wallet: requestSignature(transaction)
-    Wallet-->>User: Prompts user to approve
-    User->>Wallet: Approves transaction
-    Wallet-->>Frontend: Returns signed transaction
-    Frontend->>JS_Client: client.sendTransaction(...)
-    JS_Client->>HPL_API: (Handles Transaction Submission)
-    HPL_API-->>JS_Client: Returns confirmation
-    JS_Client-->>Frontend: Returns confirmation
-    Frontend-->>User: Displays success message
+    User->>Frontend: Signs transaction via Wallet
+    Frontend->>HPL_API: Submits signed transaction
+    HPL_API-->>Frontend: Confirmation
+    
+    alt If Resource is LedgerState
+        User->>Frontend: Clicks "Create Resource Tree"
+        Frontend->>BFF: POST /api/projects/{id}/resources/{id}/tree
+        BFF->>HPL_API: createCreateNewResourceTreeTransaction(...)
+        HPL_API-->>BFF: Returns serialized transaction
+        BFF-->>Frontend: Returns { transaction: "..." }
+        User->>Frontend: Signs transaction via Wallet
+        Frontend->>HPL_API: Submits signed transaction
+        HPL_API-->>Frontend: Confirmation
+    end
 ```

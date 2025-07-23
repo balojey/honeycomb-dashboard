@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import type { ApiResponse } from 'shared/dist'
-import { fetchProjects, createCreateProjectTransaction, fetchProfilesForProject, createCreateNewResourceTransaction } from './honeycomb-client'
+import { fetchProjects, createCreateProjectTransaction, fetchProfilesForProject, createCreateNewResourceTransaction, createMintResourceTransaction, fetchResourcesForProject } from './honeycomb-client'
 import { PublicKey } from '@solana/web3.js'
 import type { CreateResourceRequest, CreateResourceResponse } from 'shared/dist'
 
@@ -67,7 +67,6 @@ app.post('/api/projects/:projectId/resources', async (c) => {
     const projectId = c.req.param('projectId');
     const { name, symbol, decimals, uri, storageType } = await c.req.json() as CreateResourceRequest;
     const { authority } = await c.req.json();
-    console.log('Received request to create resource for project:', projectId, 'with authority:', authority);
 
     if (!projectId || !name || !symbol || decimals === undefined || !uri || !storageType || !authority) {
       return c.json({ error: 'Missing required fields for resource creation' }, 400);
@@ -113,5 +112,50 @@ app.get('/api/projects/:projectAddress/profiles', async (c) => {
     return c.json({ error: 'An unknown error occurred' }, 500)
   }
 })
+
+app.get('/api/projects/:projectAddress/resources', async (c) => {
+  const projectAddress = c.req.param('projectAddress')
+  if (!projectAddress) {
+    return c.json({ error: 'Project address is required' }, 400)
+  }
+
+  try {
+    const projectPublicKey = new PublicKey(projectAddress)
+    const resources = await fetchResourcesForProject(projectPublicKey)
+    return c.json(resources)
+  } catch (error) {
+    if (error instanceof Error) {
+      return c.json({ error: error.message }, 500)
+    }
+    return c.json({ error: 'An unknown error occurred' }, 500)
+  }
+})
+
+app.post('/api/projects/:projectId/resources/:resourceId/mint', async (c) => {
+  try {
+    const resourceId = c.req.param('resourceId');
+    const { amount, owner, authority } = await c.req.json();
+
+    if (!resourceId || !amount || !owner || !authority) {
+      return c.json({ error: 'Missing required fields for minting' }, 400);
+    }
+    console.log('Received request to mint resource:', { resourceId, amount, owner, authority });
+
+    const txResponse = await createMintResourceTransaction(
+      resourceId,
+      amount,
+      owner,
+      authority
+    );
+
+    return c.json({ tx: txResponse });
+  } catch (error) {
+    console.error('Error in POST /api/projects/:projectId/resources/:resourceId/mint:', error);
+    if (error instanceof Error) {
+      return c.json({ error: error.message }, 500);
+    }
+    return c.json({ error: 'An unknown error occurred' }, 500);
+  }
+});
 
 export default app

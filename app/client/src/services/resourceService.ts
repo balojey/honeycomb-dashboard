@@ -22,3 +22,26 @@ export const createResource = async (
 
   return response.json();
 };
+
+export const mintResource = async (
+  projectId: string,
+  resourceId: string,
+  amount: number,
+  owner: string,
+  authority: string
+) => {
+  const response = await fetch(`${API_URL}/api/projects/${projectId}/resources/${resourceId}/mint`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ amount, owner, authority }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || 'Failed to mint resource');
+  }
+
+  return response.json();
+};

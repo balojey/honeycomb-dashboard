@@ -40,3 +40,14 @@ export const createProject = async (
   const { tx: txResponse } = await response.json();
   await sendClientTransactions(client, wallet, txResponse);
 };
+
+export const fetchResourcesForProject = async (projectAddress: string) => {
+  const response = await fetch(`${API_URL}/api/projects/${projectAddress}/resources`);
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || 'Failed to fetch resources');
+  }
+
+  return response.json();
+};

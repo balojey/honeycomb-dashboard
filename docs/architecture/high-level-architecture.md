@@ -1,23 +1,27 @@
 # High Level Architecture
 
 ## Technical Summary
+
 This architecture describes a modern, full-stack web application built using the BHVR (Bun, Hono, Vite, React) stack within a monorepo structure. The system features a responsive React frontend that communicates with a lightweight Hono Backend-for-Frontend (BFF). User authentication is handled via a **direct Solana wallet connection**, interacting with the external Honeycomb Protocol GraphQL API.
 
 ## Platform and Infrastructure Choice
-* **Platform:** **Fly.io** is recommended for its excellent developer experience in deploying containerized applications with support for Bun.
-* **Key Services:**
-    * **Web App Service**: For hosting the Vite/React static frontend.
-    * **API Service**: For running the Hono BFF.
+
+  * **Platform:** **Fly.io** is recommended for its excellent developer experience in deploying containerized applications with support for Bun.
+  * **Key Services:**
+      * **Web App Service**: For hosting the Vite/React static frontend.
+      * **API Service**: For running the Hono BFF.
 
 ## Repository Structure
-* **Structure:** Monorepo
-* **Monorepo Tool:** Turborepo with Bun Workspaces
-* **Package Organization:**
-    * `app/client`: The Vite/React frontend application.
-    * `app/server`: The Hono BFF service.
-    * `app/shared`: Shared TypeScript types.
+
+  * **Structure:** Monorepo
+  * **Monorepo Tool:** Turborepo with Bun Workspaces
+  * **Package Organization:**
+      * `app/client`: The Vite/React frontend application.
+      * `app/server`: The Hono BFF service.
+      * `app/shared`: Shared TypeScript types.
 
 ## High Level Architecture Diagram
+
 ```mermaid
 graph TD
     User --> Browser[React/Vite Frontend on Fly.io];

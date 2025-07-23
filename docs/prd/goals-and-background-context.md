@@ -11,6 +11,7 @@ Honeycomb Protocol provides a powerful GraphQL API to simplify Web3 game develop
 
 ## Change Log
 | Date | Version | Description | Author |
-| --- | --- | --- | --- |
+| :--- | :--- | :--- | :--- |
+| 2025-07-23 | 1.2 | Added Story 3.1.1 to handle LedgerState resource tree creation. | Sarah, PO |
 | 2025-07-22 | 1.1 | Updated auth to social login per user feedback. | John, PM |
 | 2025-07-21 | 1.0 | Initial PRD draft | John, PM |
