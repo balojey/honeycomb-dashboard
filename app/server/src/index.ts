@@ -65,7 +65,8 @@ app.post('/api/projects', async (c) => {
 app.post('/api/projects/:projectId/resources', async (c) => {
   try {
     const projectId = c.req.param('projectId');
-    const { name, symbol, decimals, uri, storageType, authority } = await c.req.json() as Omit<CreateResourceRequest, 'authority'>;
+    const { name, symbol, decimals, uri, storageType } = await c.req.json() as CreateResourceRequest;
+    const { authority } = await c.req.json();
     console.log('Received request to create resource for project:', projectId, 'with authority:', authority);
 
     if (!projectId || !name || !symbol || decimals === undefined || !uri || !storageType || !authority) {

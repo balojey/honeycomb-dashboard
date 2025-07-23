@@ -1,5 +1,5 @@
 import createEdgeClient, { ResourceStorageEnum } from '@honeycomb-protocol/edge-client';
-import { Keypair, PublicKey } from '@solana/web3.js';
+import { PublicKey } from '@solana/web3.js';
 
 // Initialize the Honeycomb Edge Client 
 const API_URL = "https://edge.test.honeycombprotocol.com/";
