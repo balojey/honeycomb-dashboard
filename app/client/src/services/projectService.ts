@@ -38,6 +38,5 @@ export const createProject = async (
   }
 
   const { tx: txResponse } = await response.json();
-  console.log('Transaction response:', txResponse);
   await sendClientTransactions(client, wallet, txResponse);
 };

@@ -3,6 +3,8 @@ import { useProjectStore } from '../stores/projectStore';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { CreateProjectModal } from './CreateProjectModal';
 import { createProject } from '../services/projectService';
+import { Button } from './ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 
 export const ProjectList: React.FC<any> = ({ client }) => {
   const { projects, isLoading, error, fetchProjects } = useProjectStore();
@@ -33,31 +35,36 @@ export const ProjectList: React.FC<any> = ({ client }) => {
   };
 
   if (!publicKey) {
-    return <div>Please connect your wallet to see your projects.</div>;
+    return <div className="text-center text-muted-foreground">Please connect your wallet to see your projects.</div>;
   }
 
   if (isLoading) {
-    return <div>Loading projects...</div>;
+    return <div className="text-center text-muted-foreground">Loading projects...</div>;
   }
 
   if (error || createError) {
-    return <div>Error: {error || createError}</div>;
+    return <div className="text-center text-destructive">Error: {error || createError}</div>;
   }
 
   return (
-    <div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <h2>Your Projects</h2>
-        <button onClick={() => setIsModalOpen(true)}>Create New Project</button>
+    <div className="container mx-auto">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-3xl font-bold">Your Projects</h2>
+        <Button onClick={() => setIsModalOpen(true)}>Create New Project</Button>
       </div>
       {projects.length === 0 ? (
-        <div>No projects found.</div>
+        <div className="text-center text-muted-foreground py-10">No projects found.</div>
       ) : (
-        <ul>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {projects.map((project) => (
-            <li key={project.address.toString()}>{project.name}</li>
+            <Card key={project.address.toString()}>
+              <CardHeader>
+                <CardTitle>{project.name}</CardTitle>
+                <CardDescription className='truncate'>Address: {project.address.toString()}</CardDescription>
+              </CardHeader>
+            </Card>
           ))}
-        </ul>
+        </div>
       )}
       <CreateProjectModal
         isOpen={isModalOpen}

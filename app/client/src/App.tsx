@@ -9,11 +9,14 @@ function App() {
   const client = useMemo(() => createEdgeClient(API_KEY, true), [API_KEY]);
 
   return (
-    <div className="max-w-xl mx-auto flex flex-col gap-6 items-center justify-center min-h-screen">
-      <div className='flex items-center gap-4'>
+    <div className="bg-background text-foreground min-h-screen">
+      <header className="p-4 flex justify-between items-center border-b">
+        <h1 className="text-2xl font-bold">Honeycomb Dashboard</h1>
         <ConnectWalletButton />
-      </div>
-      <ProjectList client={client} />
+      </header>
+      <main className="p-4 sm:p-6 md:p-8">
+        <ProjectList client={client} />
+      </main>
     </div>
   )
 }
