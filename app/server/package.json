@@ -8,6 +8,7 @@
     "dev": "bun --watch run src/index.ts"
   },
   "dependencies": {
+    "@honeycomb-protocol/edge-client": "^0.0.7-beta.15",
     "hono": "^4.7.11",
     "shared": "workspace:*"
   },

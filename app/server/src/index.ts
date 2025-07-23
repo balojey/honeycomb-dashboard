@@ -1,6 +1,8 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import type { ApiResponse } from 'shared/dist'
+import { fetchProjects } from './honeycomb-client'
+import { PublicKey } from '@solana/web3.js'
 
 const app = new Hono()
 
@@ -18,6 +20,24 @@ app.get('/hello', async (c) => {
   }
 
   return c.json(data, { status: 200 })
+})
+
+app.get('/api/projects', async (c) => {
+  const authority = c.req.query('authority')
+  if (!authority) {
+    return c.json({ error: 'Authority is required' }, 400)
+  }
+
+  try {
+    const authorityPublicKey = new PublicKey(authority)
+    const projects = await fetchProjects(authorityPublicKey)
+    return c.json(projects)
+  } catch (error) {
+    if (error instanceof Error) {
+      return c.json({ error: error.message }, 500)
+    }
+    return c.json({ error: 'An unknown error occurred' }, 500)
+  }
 })
 
 export default app
