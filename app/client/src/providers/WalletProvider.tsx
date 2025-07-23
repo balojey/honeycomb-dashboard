@@ -1,7 +1,7 @@
 
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
-import { PhantomWalletAdapter } from '@solana/wallet-adapter-wallets';
+import { PhantomWalletAdapter, SolflareWalletAdapter } from '@solana/wallet-adapter-wallets';
 import { useMemo } from 'react';
 import { clusterApiUrl } from '@solana/web3.js';
 
@@ -9,14 +9,15 @@ import { clusterApiUrl } from '@solana/web3.js';
 import '@solana/wallet-adapter-react-ui/styles.css';
 
 export function ClientWalletProvider({ children }: { children: React.ReactNode }) {
+    const network = "https://rpc.main.honeycombprotocol.com";
+    const endpoint = useMemo(() => network, [network]);
     const wallets = useMemo(
         () => [
             new PhantomWalletAdapter(),
+            new SolflareWalletAdapter(),
         ],
-        []
+        [network]
     );
-
-    const endpoint = useMemo(() => clusterApiUrl('devnet'), []);
 
     return (
         <ConnectionProvider endpoint={endpoint}>
