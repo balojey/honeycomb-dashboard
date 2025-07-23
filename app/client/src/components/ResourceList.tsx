@@ -1,14 +1,15 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
-import { Resource } from '@honeycomb-protocol/edge-client';
+import { Resource, ResourceStorageEnum } from '@honeycomb-protocol/edge-client';
 
 interface ResourceListProps {
   resources: Resource[];
   onMint: (resource: Resource) => void;
+  onCreateResourceTree: (resource: Resource) => void;
 }
 
-export const ResourceList: React.FC<ResourceListProps> = ({ resources, onMint }) => {
+export const ResourceList: React.FC<ResourceListProps> = ({ resources, onMint, onCreateResourceTree }) => {
   console.log('Rendering ResourceList with resources:', resources);
 
   if (!resources || resources.length === 0) {
@@ -26,6 +27,9 @@ export const ResourceList: React.FC<ResourceListProps> = ({ resources, onMint })
             <p className="truncate">Symbol: {resource.symbol}</p>
             <p className="truncate">URI: {resource.uri}</p>
             <Button onClick={() => onMint(resource)} className="mt-4">Mint</Button>
+            {resource.storage.kind === ResourceStorageEnum.LedgerState && (
+              <Button onClick={() => onCreateResourceTree(resource)} className="mt-4 ml-2">Create Resource Tree</Button>
+            )}
           </CardContent>
         </Card>
       ))}

@@ -113,3 +113,28 @@ export const fetchResourcesForProject = async (projectPublicKey: PublicKey) => {
     throw new Error('Failed to fetch resources');
   }
 }
+
+export const createCreateNewResourceTreeTransaction = async (
+  projectId: string,
+  resourceId: string,
+  authority: string,
+) => {
+  try {
+    const { createCreateNewResourceTreeTransaction: { tx: txResponse } } = await client.createCreateNewResourceTreeTransaction({
+      project: projectId,
+      resource: resourceId,
+      treeConfig: {
+        basic: {
+          numAssets: 10000
+        }
+      },
+      authority: authority,
+      payer: authority,
+    });
+    console.log('Prepared create new resource tree transaction:', txResponse);
+    return txResponse;
+  } catch (error) {
+    console.error('Error preparing create new resource tree transaction:', error);
+    throw new Error('Failed to prepare create new resource tree transaction');
+  }
+}

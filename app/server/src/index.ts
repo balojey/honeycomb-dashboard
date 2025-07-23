@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import type { ApiResponse } from 'shared/dist'
-import { fetchProjects, createCreateProjectTransaction, fetchProfilesForProject, createCreateNewResourceTransaction, createMintResourceTransaction, fetchResourcesForProject } from './honeycomb-client'
+import { fetchProjects, createCreateProjectTransaction, fetchProfilesForProject, createCreateNewResourceTransaction, createMintResourceTransaction, fetchResourcesForProject, createCreateNewResourceTreeTransaction } from './honeycomb-client'
 import { PublicKey } from '@solana/web3.js'
 import type { CreateResourceRequest, CreateResourceResponse } from 'shared/dist'
 
@@ -151,6 +151,32 @@ app.post('/api/projects/:projectId/resources/:resourceId/mint', async (c) => {
     return c.json({ tx: txResponse });
   } catch (error) {
     console.error('Error in POST /api/projects/:projectId/resources/:resourceId/mint:', error);
+    if (error instanceof Error) {
+      return c.json({ error: error.message }, 500);
+    }
+    return c.json({ error: 'An unknown error occurred' }, 500);
+  }
+});
+
+app.post('/api/projects/:projectId/resources/:resourceId/tree', async (c) => {
+  try {
+    const projectId = c.req.param('projectId');
+    const resourceId = c.req.param('resourceId');
+    const { authority } = await c.req.json();
+
+    if (!projectId || !resourceId || !authority) {
+      return c.json({ error: 'Missing required fields for resource tree creation' }, 400);
+    }
+
+    const txResponse = await createCreateNewResourceTreeTransaction(
+      projectId,
+      resourceId,
+      authority
+    );
+
+    return c.json({ tx: txResponse });
+  } catch (error) {
+    console.error('Error in POST /api/projects/:projectId/resources/:resourceId/tree:', error);
     if (error instanceof Error) {
       return c.json({ error: error.message }, 500);
     }

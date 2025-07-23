@@ -10,11 +10,11 @@ import { ResourceList } from '../components/ResourceList';
 import { Button } from '../components/ui/button';
 import { CreateResourceModal } from '../components/CreateResourceModal';
 import { MintResourceModal } from '../components/MintResourceModal';
-import { mintResource } from '../services/resourceService';
+import { mintResource, createResourceTree } from '../services/resourceService';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { toast } from 'sonner';
 import { sendClientTransactions } from '@honeycomb-protocol/edge-client/client/walletHelpers';
-import createEdgeClient from '@honeycomb-protocol/edge-client';
+import createEdgeClient, { Resource } from '@honeycomb-protocol/edge-client';
 
 const API_KEY = import.meta.env.VITE_API_KEY || "https://edge.test.honeycombprotocol.com/";
 
@@ -25,7 +25,7 @@ export const ProjectDetailPage: React.FC = () => {
   const { resources, fetchResources } = useResourceStore();
   const [isCreateModalOpen, setCreateModalOpen] = React.useState(false);
   const [isMintModalOpen, setMintModalOpen] = React.useState(false);
-  const [selectedResource, setSelectedResource] = useState<any>(null);
+  const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
   const wallet = useWallet();
   const client = useMemo(() => createEdgeClient(API_KEY, true), []);
 
@@ -38,9 +38,27 @@ export const ProjectDetailPage: React.FC = () => {
     }
   }, [projectAddress, fetchProfiles, fetchResources]);
 
-  const handleMint = (resource: any) => {
+  const handleMint = (resource: Resource) => {
     setSelectedResource(resource);
     setMintModalOpen(true);
+  };
+
+  const handleCreateResourceTree = async (resource: Resource) => {
+    if (!projectAddress || !wallet.publicKey) return;
+
+    try {
+      const result = await createResourceTree(
+        projectAddress,
+        resource.address.toString(),
+        wallet.publicKey.toString()
+      );
+      console.log('Create resource tree successful:', result);
+      await sendClientTransactions(client, wallet, result.tx);
+      toast.success('Resource tree created successfully!');
+    } catch (error) {
+      console.error('Failed to create resource tree:', error);
+      toast.error('Failed to create resource tree.');
+    }
   };
 
   const handleMintSubmit = async (amount: number, owner: string) => {
@@ -86,7 +104,7 @@ export const ProjectDetailPage: React.FC = () => {
             <CardTitle>Resources</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResourceList resources={resources} onMint={handleMint} />
+            <ResourceList resources={resources} onMint={handleMint} onCreateResourceTree={handleCreateResourceTree} />
           </CardContent>
         </Card>
         <Card>

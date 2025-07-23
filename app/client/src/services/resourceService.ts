@@ -45,3 +45,24 @@ export const mintResource = async (
 
   return response.json();
 };
+
+export const createResourceTree = async (
+  projectId: string,
+  resourceId: string,
+  authority: string
+) => {
+  const response = await fetch(`${API_URL}/api/projects/${projectId}/resources/${resourceId}/tree`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ authority }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || 'Failed to create resource tree');
+  }
+
+  return response.json();
+};
