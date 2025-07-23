@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useProjectStore } from '../stores/projectStore';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { CreateProjectModal } from './CreateProjectModal';
 import { createProject } from '../services/projectService';
 import { Button } from './ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
+import { Card, CardDescription, CardHeader, CardTitle } from './ui/card';
 
 export const ProjectList: React.FC<any> = ({ client }) => {
   const { projects, isLoading, error, fetchProjects } = useProjectStore();
@@ -57,12 +58,14 @@ export const ProjectList: React.FC<any> = ({ client }) => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {projects.map((project) => (
-            <Card key={project.address.toString()}>
-              <CardHeader>
-                <CardTitle>{project.name}</CardTitle>
-                <CardDescription className='truncate'>Address: {project.address.toString()}</CardDescription>
-              </CardHeader>
-            </Card>
+            <Link to={`/project/${project.address.toString()}`} key={project.address.toString()} className="block hover:shadow-lg transition-shadow duration-200 rounded-lg">
+              <Card className="h-full">
+                <CardHeader>
+                  <CardTitle>{project.name}</CardTitle>
+                  <CardDescription className='truncate'>Address: {project.address.toString()}</CardDescription>
+                </CardHeader>
+              </Card>
+            </Link>
           ))}
         </div>
       )}
