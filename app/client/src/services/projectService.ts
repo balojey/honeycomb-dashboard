@@ -1,4 +1,4 @@
-import { Project } from '@honeycomb-protocol/edge-client';
+import { EdgeClient, Project } from '@honeycomb-protocol/edge-client';
 import { sendClientTransactions } from '@honeycomb-protocol/edge-client/client/walletHelpers';
 import { WalletContextState } from '@solana/wallet-adapter-react';
 
@@ -18,7 +18,7 @@ export const fetchProjects = async (authority: string): Promise<Project[]> => {
 export const createProject = async (
   projectName: string,
   wallet: WalletContextState,
-  client: any
+  client: EdgeClient
 ): Promise<void> => {
   if (!wallet.publicKey) {
     throw new Error('Wallet not connected.');

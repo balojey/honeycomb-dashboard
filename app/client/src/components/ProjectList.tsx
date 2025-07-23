@@ -6,8 +6,13 @@ import { CreateProjectModal } from './CreateProjectModal';
 import { createProject } from '../services/projectService';
 import { Button } from './ui/button';
 import { Card, CardDescription, CardHeader, CardTitle } from './ui/card';
+import { EdgeClient } from '@honeycomb-protocol/edge-client';
 
-export const ProjectList: React.FC<any> = ({ client }) => {
+interface ProjectListProps {
+  client: EdgeClient;
+}
+
+export const ProjectList: React.FC<ProjectListProps> = ({ client }) => {
   const { projects, isLoading, error, fetchProjects } = useProjectStore();
   const wallet = useWallet();
   const { publicKey } = wallet;

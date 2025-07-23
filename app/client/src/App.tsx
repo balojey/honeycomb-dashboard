@@ -20,7 +20,7 @@ const RootLayout = () => (
 );
 
 function App() {
-  const client = useMemo(() => createEdgeClient(API_KEY, true), [API_KEY]);
+  const client = useMemo(() => createEdgeClient(API_KEY, true), []);
 
   const router = createBrowserRouter([
     {
