@@ -1,8 +1,9 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import type { ApiResponse } from 'shared/dist'
-import { fetchProjects, createCreateProjectTransaction, fetchProfilesForProject } from './honeycomb-client'
+import { fetchProjects, createCreateProjectTransaction, fetchProfilesForProject, createCreateNewResourceTransaction } from './honeycomb-client'
 import { PublicKey } from '@solana/web3.js'
+import type { CreateResourceRequest, CreateResourceResponse } from 'shared/dist'
 
 const app = new Hono()
 
@@ -54,6 +55,39 @@ app.post('/api/projects', async (c) => {
     return c.json({ tx: txResponse });
   } catch (error) {
     console.error('Error in POST /api/projects:', error);
+    if (error instanceof Error) {
+      return c.json({ error: error.message }, 500);
+    }
+    return c.json({ error: 'An unknown error occurred' }, 500);
+  }
+});
+
+app.post('/api/projects/:projectId/resources', async (c) => {
+  try {
+    const projectId = c.req.param('projectId');
+    const { name, symbol, decimals, uri, storageType, authority } = await c.req.json() as Omit<CreateResourceRequest, 'authority'>;
+    console.log('Received request to create resource for project:', projectId, 'with authority:', authority);
+
+    if (!projectId || !name || !symbol || decimals === undefined || !uri || !storageType || !authority) {
+      return c.json({ error: 'Missing required fields for resource creation' }, 400);
+    }
+
+    const projectPublicKey = new PublicKey(projectId);
+    const authorityPublicKey = new PublicKey(authority);
+    const txResponse = await createCreateNewResourceTransaction(
+      projectPublicKey,
+      name,
+      symbol,
+      decimals,
+      uri,
+      storageType,
+      authorityPublicKey
+    );
+
+    const response: CreateResourceResponse = { tx: txResponse };
+    return c.json(response);
+  } catch (error) {
+    console.error('Error in POST /api/projects/:projectId/resources:', error);
     if (error instanceof Error) {
       return c.json({ error: error.message }, 500);
     }

@@ -1,13 +1,9 @@
-import createEdgeClient from '@honeycomb-protocol/edge-client';
+import createEdgeClient, { ResourceStorageEnum } from '@honeycomb-protocol/edge-client';
 import { Keypair, PublicKey } from '@solana/web3.js';
 
 // Initialize the Honeycomb Edge Client 
 const API_URL = "https://edge.test.honeycombprotocol.com/";
 const client = createEdgeClient(API_URL, true)
-
-// This is a placeholder for the actual authority.
-// In a real application, you would get this from the authenticated user.
-const authority = new Keypair();
 
 export const fetchProjects = async (authorityPublicKey: PublicKey) => {
   try {
@@ -36,6 +32,36 @@ export const createCreateProjectTransaction = async (
   } catch (error) {
     console.error('Error preparing create project transaction:', error);
     throw new Error('Failed to prepare create project transaction');
+  }
+};
+
+export const createCreateNewResourceTransaction = async (
+  projectPublicKey: PublicKey,
+  name: string,
+  symbol: string,
+  decimals: number,
+  uri: string,
+  storageType: ResourceStorageEnum.AccountState | ResourceStorageEnum.LedgerState,
+  authorityPublicKey: PublicKey
+) => {
+  try {
+    const { createCreateNewResourceTransaction: { tx: txResponse } } = await client.createCreateNewResourceTransaction({
+      project: projectPublicKey.toString(),
+      params: {
+        name: name,
+        symbol: symbol,
+        decimals: decimals,
+        uri: uri,
+        storage: storageType,
+      },
+      authority: authorityPublicKey.toString(),
+      payer: authorityPublicKey.toString(),
+    });
+    console.log('Prepared create new resource transaction:', txResponse);
+    return txResponse;
+  } catch (error) {
+    console.error('Error preparing create new resource transaction:', error);
+    throw new Error('Failed to prepare create new resource transaction');
   }
 };
 
