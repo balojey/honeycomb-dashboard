@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import type { ApiResponse } from 'shared/dist'
-import { fetchProjects, createCreateProjectTransaction } from './honeycomb-client'
+import { fetchProjects, createCreateProjectTransaction, fetchProfilesForProject } from './honeycomb-client'
 import { PublicKey } from '@solana/web3.js'
 
 const app = new Hono()
@@ -60,5 +60,23 @@ app.post('/api/projects', async (c) => {
     return c.json({ error: 'An unknown error occurred' }, 500);
   }
 });
+
+app.get('/api/projects/:projectAddress/profiles', async (c) => {
+  const projectAddress = c.req.param('projectAddress')
+  if (!projectAddress) {
+    return c.json({ error: 'Project address is required' }, 400)
+  }
+
+  try {
+    const projectPublicKey = new PublicKey(projectAddress)
+    const profiles = await fetchProfilesForProject(projectPublicKey)
+    return c.json(profiles)
+  } catch (error) {
+    if (error instanceof Error) {
+      return c.json({ error: error.message }, 500)
+    }
+    return c.json({ error: 'An unknown error occurred' }, 500)
+  }
+})
 
 export default app

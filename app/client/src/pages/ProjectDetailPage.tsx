@@ -1,14 +1,23 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useProjectStore } from '../stores/projectStore';
+import { useProfileStore } from '../stores/profileStore';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import { ProfileList } from '../components/ProfileList';
 
 export const ProjectDetailPage: React.FC = () => {
   const { projectAddress } = useParams<{ projectAddress: string }>();
   const { projects } = useProjectStore();
+  const { fetchProfiles } = useProfileStore();
 
   const project = projects.find(p => p.address.toString() === projectAddress);
+
+  useEffect(() => {
+    if (projectAddress) {
+      fetchProfiles(projectAddress);
+    }
+  }, [projectAddress, fetchProfiles]);
 
   if (!project) {
     return <div className="text-center text-muted-foreground">Project not found.</div>;
@@ -29,7 +38,7 @@ export const ProjectDetailPage: React.FC = () => {
             <CardTitle>Users & Profiles</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground">User and profile management will be available here soon.</p>
+            <ProfileList />
           </CardContent>
         </Card>
       </div>
