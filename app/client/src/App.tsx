@@ -3,6 +3,9 @@ import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
 import { ConnectWalletButton } from './components/ConnectWalletButton';
 import { ProjectList } from './components/ProjectList';
 import { ProjectDetailPage } from './pages/ProjectDetailPage';
+import { UserListPage } from './pages/UserListPage';
+import { ResourceListPage } from './pages/ResourceListPage';
+import { CharacterModelListPage } from './pages/CharacterModelListPage';
 import createEdgeClient from '@honeycomb-protocol/edge-client';
 
 const API_KEY = import.meta.env.VITE_API_KEY || "https://edge.test.honeycombprotocol.com/";
@@ -34,6 +37,24 @@ function App() {
         {
           path: "project/:projectAddress",
           element: <ProjectDetailPage />,
+          children: [
+            {
+              index: true,
+              element: <UserListPage />,
+            },
+            {
+              path: "users",
+              element: <UserListPage />,
+            },
+            {
+              path: "resources",
+              element: <ResourceListPage />,
+            },
+            {
+              path: "characters",
+              element: <CharacterModelListPage />,
+            },
+          ],
         },
       ],
     },
