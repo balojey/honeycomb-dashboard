@@ -22,7 +22,7 @@ interface AddTraitsFormProps {
   onCancel: () => void;
 }
 
-const AddTraitsForm: React.FC<AddTraitsFormProps> = ({ 
+export const AddTraitsForm: React.FC<AddTraitsFormProps> = ({
   projectId, 
   assemblerConfigId,
   existingTraits = [],

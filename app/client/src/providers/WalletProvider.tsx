@@ -8,7 +8,7 @@ import { useMemo } from 'react';
 import '@solana/wallet-adapter-react-ui/styles.css';
 
 export function ClientWalletProvider({ children }: { children: React.ReactNode }) {
-    const network = "https://rpc.main.honeycombprotocol.com";
+    const network = "https://rpc.test.honeycombprotocol.com";
     const endpoint = useMemo(() => network, [network]);
     const wallets = useMemo(
         () => [

@@ -36,7 +36,7 @@ interface CreateAssemblerConfigFormProps {
   onCancel: () => void;
 }
 
-const CreateAssemblerConfigForm: React.FC<CreateAssemblerConfigFormProps> = ({ 
+export const CreateAssemblerConfigForm: React.FC<CreateAssemblerConfigFormProps> = ({
   projectId, 
   onSuccess, 
   onCancel 
