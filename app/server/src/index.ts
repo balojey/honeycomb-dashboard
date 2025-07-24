@@ -4,6 +4,7 @@ import type { ApiResponse } from 'shared/dist'
 import { fetchProjects, createCreateProjectTransaction, fetchProfilesForProject, createCreateNewResourceTransaction, createMintResourceTransaction, fetchResourcesForProject, createCreateNewResourceTreeTransaction } from './honeycomb-client'
 import { PublicKey } from '@solana/web3.js'
 import type { CreateResourceRequest, CreateResourceResponse } from 'shared/dist'
+import { createAssemblerConfig } from './routes/assemblerConfigs'
 
 const app = new Hono()
 
@@ -183,5 +184,8 @@ app.post('/api/projects/:projectId/resources/:resourceId/tree', async (c) => {
     return c.json({ error: 'An unknown error occurred' }, 500);
   }
 });
+
+// Route for creating assembler configs
+app.post('/api/projects/:projectId/assembler-configs', createAssemblerConfig);
 
 export default app
