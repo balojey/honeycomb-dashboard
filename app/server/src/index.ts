@@ -4,7 +4,7 @@ import type { ApiResponse } from 'shared/dist'
 import { fetchProjects, createCreateProjectTransaction, fetchProfilesForProject, createCreateNewResourceTransaction, createMintResourceTransaction, fetchResourcesForProject, createCreateNewResourceTreeTransaction } from './honeycomb-client'
 import { PublicKey } from '@solana/web3.js'
 import type { CreateResourceRequest, CreateResourceResponse } from 'shared/dist'
-import { createAssemblerConfig } from './routes/assemblerConfigs'
+import { createAssemblerConfig, addCharacterTraits } from './routes/assemblerConfigs'
 
 const app = new Hono()
 
@@ -187,5 +187,8 @@ app.post('/api/projects/:projectId/resources/:resourceId/tree', async (c) => {
 
 // Route for creating assembler configs
 app.post('/api/projects/:projectId/assembler-configs', createAssemblerConfig);
+
+// Route for adding traits to assembler configs
+app.post('/api/projects/:projectId/assembler-configs/:configId/traits', addCharacterTraits);
 
 export default app

@@ -3,6 +3,11 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { useConnection } from '@solana/wallet-adapter-react';
 import { Transaction } from '@solana/web3.js';
 import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 
 interface TreeConfigBasic {
   numAssets: number;
@@ -171,199 +176,179 @@ const CreateAssemblerConfigForm: React.FC<CreateAssemblerConfigFormProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-2xl">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800">Create Assembler Config</h2>
-      
-      <form onSubmit={handleSubmit}>
-        {/* Ticker Input */}
-        <div className="mb-6">
-          <label htmlFor="ticker" className="block text-sm font-medium text-gray-700 mb-1">
-            Ticker ID
-          </label>
-          <input
-            type="text"
-            id="ticker"
-            value={formData.ticker}
-            onChange={(e) => setFormData({ ...formData, ticker: e.target.value })}
-            className={`w-full px-3 py-2 border rounded-md ${
-              errors.ticker ? 'border-red-500' : 'border-gray-300'
-            }`}
-            placeholder="Enter a unique ticker ID"
-          />
-          {errors.ticker && <p className="mt-1 text-sm text-red-600">{errors.ticker}</p>}
-        </div>
-        
-        {/* Layer Order */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Layer Order
-          </label>
-          <div className="flex mb-2">
-            <input
-              type="text"
-              value={layerInput}
-              onChange={(e) => setLayerInput(e.target.value)}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-l-md"
-              placeholder="Enter layer name"
-              onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddLayer())}
+    <Card className="w-full max-w-2xl">
+      <CardHeader>
+        <CardTitle>Create Assembler Config</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit}>
+          {/* Ticker Input */}
+          <div className="mb-6">
+            <Label htmlFor="ticker" className="mb-1">
+              Ticker ID
+            </Label>
+            <Input
+              id="ticker"
+              value={formData.ticker}
+              onChange={(e) => setFormData({ ...formData, ticker: e.target.value })}
+              className={errors.ticker ? 'border-destructive' : ''}
+              placeholder="Enter a unique ticker ID"
             />
-            <button
-              type="button"
-              onClick={handleAddLayer}
-              className="px-4 py-2 bg-blue-500 text-white rounded-r-md hover:bg-blue-600"
-            >
-              Add
-            </button>
-          </div>
-          {errors.order && <p className="mt-1 text-sm text-red-600">{errors.order}</p>}
-          
-          {formData.order.length > 0 && (
-            <div className="mt-2">
-              <ul className="space-y-2">
-                {formData.order.map((layer, index) => (
-                  <li key={index} className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded-md">
-                    <span>{layer}</span>
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveLayer(index)}
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      Remove
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-        
-        {/* Tree Config Type Selection */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Tree Configuration
-          </label>
-          <div className="flex space-x-4 mb-4">
-            <button
-              type="button"
-              className={`px-4 py-2 rounded-md ${
-                configType === 'basic'
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              }`}
-              onClick={() => setConfigType('basic')}
-            >
-              Basic
-            </button>
-            <button
-              type="button"
-              className={`px-4 py-2 rounded-md ${
-                configType === 'advanced'
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              }`}
-              onClick={() => setConfigType('advanced')}
-            >
-              Advanced
-            </button>
+            {errors.ticker && <p className="text-sm text-destructive mt-1">{errors.ticker}</p>}
           </div>
           
-          {/* Basic Config */}
-          {configType === 'basic' && (
-            <div className="border border-gray-200 rounded-md p-4">
-              <label htmlFor="numAssets" className="block text-sm font-medium text-gray-700 mb-1">
-                Number of Assets
-              </label>
-              <input
-                type="number"
-                id="numAssets"
-                value={basicConfig.numAssets}
-                onChange={(e) => setBasicConfig({ ...basicConfig, numAssets: parseInt(e.target.value) || 0 })}
-                className={`w-full px-3 py-2 border rounded-md ${
-                  errors.numAssets ? 'border-red-500' : 'border-gray-300'
-                }`}
-                min="1"
+          {/* Layer Order */}
+          <div className="mb-6">
+            <Label className="mb-1">
+              Layer Order
+            </Label>
+            <div className="flex mb-2">
+              <Input
+                value={layerInput}
+                onChange={(e) => setLayerInput(e.target.value)}
+                className="flex-1 rounded-r-none"
+                placeholder="Enter layer name"
+                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddLayer())}
               />
-              {errors.numAssets && <p className="mt-1 text-sm text-red-600">{errors.numAssets}</p>}
+              <Button
+                type="button"
+                onClick={handleAddLayer}
+                className="rounded-l-none"
+              >
+                Add
+              </Button>
             </div>
-          )}
+            {errors.order && <p className="text-sm text-destructive">{errors.order}</p>}
+            
+            {formData.order.length > 0 && (
+              <div className="mt-2">
+                <ul className="space-y-2">
+                  {formData.order.map((layer, index) => (
+                    <li key={index} className="flex items-center justify-between bg-muted px-3 py-2 rounded-md">
+                      <span>{layer}</span>
+                      <Button
+                        type="button"
+                        onClick={() => handleRemoveLayer(index)}
+                        variant="ghost"
+                        size="sm"
+                      >
+                        Remove
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
           
-          {/* Advanced Config */}
-          {configType === 'advanced' && (
-            <div className="border border-gray-200 rounded-md p-4 space-y-4">
-              <div>
-                <label htmlFor="maxDepth" className="block text-sm font-medium text-gray-700 mb-1">
-                  Max Depth
-                </label>
-                <input
+          {/* Tree Config Type Selection */}
+          <div className="mb-6">
+            <Label className="mb-2">
+              Tree Configuration
+            </Label>
+            <ToggleGroup 
+              type="single" 
+              value={configType} 
+              onValueChange={(value: 'basic' | 'advanced') => value && setConfigType(value)}
+              className="mb-4"
+            >
+              <ToggleGroupItem value="basic" aria-label="Basic configuration">
+                Basic
+              </ToggleGroupItem>
+              <ToggleGroupItem value="advanced" aria-label="Advanced configuration">
+                Advanced
+              </ToggleGroupItem>
+            </ToggleGroup>
+            
+            {/* Basic Config */}
+            {configType === 'basic' && (
+              <div className="border rounded-md p-4">
+                <Label htmlFor="numAssets" className="mb-1">
+                  Number of Assets
+                </Label>
+                <Input
+                  id="numAssets"
                   type="number"
-                  id="maxDepth"
-                  value={advancedConfig.maxDepth}
-                  onChange={(e) => setAdvancedConfig({ ...advancedConfig, maxDepth: parseInt(e.target.value) || 0 })}
-                  className={`w-full px-3 py-2 border rounded-md ${
-                    errors.maxDepth ? 'border-red-500' : 'border-gray-300'
-                  }`}
+                  value={basicConfig.numAssets}
+                  onChange={(e) => setBasicConfig({ ...basicConfig, numAssets: parseInt(e.target.value) || 0 })}
+                  className={errors.numAssets ? 'border-destructive' : ''}
                   min="1"
                 />
-                {errors.maxDepth && <p className="mt-1 text-sm text-red-600">{errors.maxDepth}</p>}
+                {errors.numAssets && <p className="text-sm text-destructive mt-1">{errors.numAssets}</p>}
               </div>
-              
-              <div>
-                <label htmlFor="maxBufferSize" className="block text-sm font-medium text-gray-700 mb-1">
-                  Max Buffer Size
-                </label>
-                <input
-                  type="number"
-                  id="maxBufferSize"
-                  value={advancedConfig.maxBufferSize}
-                  onChange={(e) => setAdvancedConfig({ ...advancedConfig, maxBufferSize: parseInt(e.target.value) || 0 })}
-                  className={`w-full px-3 py-2 border rounded-md ${
-                    errors.maxBufferSize ? 'border-red-500' : 'border-gray-300'
-                  }`}
-                  min="1"
-                />
-                {errors.maxBufferSize && <p className="mt-1 text-sm text-red-600">{errors.maxBufferSize}</p>}
+            )}
+            
+            {/* Advanced Config */}
+            {configType === 'advanced' && (
+              <div className="border rounded-md p-4 space-y-4">
+                <div>
+                  <Label htmlFor="maxDepth" className="mb-1">
+                    Max Depth
+                  </Label>
+                  <Input
+                    id="maxDepth"
+                    type="number"
+                    value={advancedConfig.maxDepth}
+                    onChange={(e) => setAdvancedConfig({ ...advancedConfig, maxDepth: parseInt(e.target.value) || 0 })}
+                    className={errors.maxDepth ? 'border-destructive' : ''}
+                    min="1"
+                  />
+                  {errors.maxDepth && <p className="text-sm text-destructive mt-1">{errors.maxDepth}</p>}
+                </div>
+                
+                <div>
+                  <Label htmlFor="maxBufferSize" className="mb-1">
+                    Max Buffer Size
+                  </Label>
+                  <Input
+                    id="maxBufferSize"
+                    type="number"
+                    value={advancedConfig.maxBufferSize}
+                    onChange={(e) => setAdvancedConfig({ ...advancedConfig, maxBufferSize: parseInt(e.target.value) || 0 })}
+                    className={errors.maxBufferSize ? 'border-destructive' : ''}
+                    min="1"
+                  />
+                  {errors.maxBufferSize && <p className="text-sm text-destructive mt-1">{errors.maxBufferSize}</p>}
+                </div>
+                
+                <div>
+                  <Label htmlFor="canopyDepth" className="mb-1">
+                    Canopy Depth
+                  </Label>
+                  <Input
+                    id="canopyDepth"
+                    type="number"
+                    value={advancedConfig.canopyDepth}
+                    onChange={(e) => setAdvancedConfig({ ...advancedConfig, canopyDepth: parseInt(e.target.value) || 0 })}
+                    className={errors.canopyDepth ? 'border-destructive' : ''}
+                    min="0"
+                  />
+                  {errors.canopyDepth && <p className="text-sm text-destructive mt-1">{errors.canopyDepth}</p>}
+                </div>
               </div>
-              
-              <div>
-                <label htmlFor="canopyDepth" className="block text-sm font-medium text-gray-700 mb-1">
-                  Canopy Depth
-                </label>
-                <input
-                  type="number"
-                  id="canopyDepth"
-                  value={advancedConfig.canopyDepth}
-                  onChange={(e) => setAdvancedConfig({ ...advancedConfig, canopyDepth: parseInt(e.target.value) || 0 })}
-                  className={`w-full px-3 py-2 border rounded-md ${
-                    errors.canopyDepth ? 'border-red-500' : 'border-gray-300'
-                  }`}
-                  min="0"
-                />
-                {errors.canopyDepth && <p className="mt-1 text-sm text-red-600">{errors.canopyDepth}</p>}
-              </div>
-            </div>
-          )}
-        </div>
-        
-        {/* Form Actions */}
-        <div className="flex justify-end space-x-3">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
-            disabled={isSubmitting}
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? 'Creating...' : 'Create Assembler Config'}
-          </button>
-        </div>
-      </form>
-    </div>
+            )}
+          </div>
+          
+          {/* Form Actions */}
+          <div className="flex justify-end space-x-3">
+            <Button
+              type="button"
+              onClick={onCancel}
+              variant="outline"
+              disabled={isSubmitting}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Creating...' : 'Create Assembler Config'}
+            </Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
   );
 };
 

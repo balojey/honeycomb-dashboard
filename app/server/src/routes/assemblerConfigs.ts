@@ -83,3 +83,63 @@ export const createAssemblerConfig = async (c: Context) => {
     }, 500);
   }
 };
+
+// POST /api/projects/:projectId/assembler-configs/:configId/traits
+export const addCharacterTraits = async (c: Context) => {
+  try {
+    const { projectId, configId } = c.req.param();
+    const traits = await c.req.json();
+    
+    // Validate required fields
+    if (!traits) {
+      return c.json({ 
+        message: 'Missing required field: traits array is required' 
+      }, 400);
+    }
+    
+    // Validate traits is an array
+    if (!Array.isArray(traits)) {
+      return c.json({ 
+        message: 'Traits must be an array of trait objects' 
+      }, 400);
+    }
+    
+    // Validate each trait object
+    for (let i = 0; i < traits.length; i++) {
+      const trait = traits[i];
+      
+      if (!trait.label || !trait.name || !trait.uri) {
+        return c.json({ 
+          message: `Trait at index ${i} is missing required fields: label, name, and uri are required` 
+        }, 400);
+      }
+      
+      // Validate URI format
+      try {
+        new URL(trait.uri);
+      } catch (err) {
+        return c.json({ 
+          message: `Trait at index ${i} has an invalid URI format` 
+        }, 400);
+      }
+    }
+    
+    // Create the transaction using the Honeycomb API client
+    // Note: This assumes you have middleware that adds the wallet public key to the context
+    const { createAddCharacterTraitsTransactions: transaction } = await client.createAddCharacterTraitsTransactions({
+      assemblerConfig: configId || "",
+      traits,
+      authority: c.get('walletPublicKey'), // Assuming this is added by middleware
+      // Optional fields can be added here if provided in the request
+    });
+    
+    // Return the serialized transaction to the frontend
+    return c.json({ transaction: transaction });
+  } catch (error) {
+    console.error('Error creating add character traits transaction:', error);
+    return c.json({ 
+      message: 'Failed to create add character traits transaction',
+      error: error instanceof Error ? error.message : 'Unknown error'
+    }, 500);
+  }
+};
