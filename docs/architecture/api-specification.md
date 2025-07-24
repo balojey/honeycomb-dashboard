@@ -27,9 +27,18 @@ paths:
   /projects/{projectId}/resources/{resourceId}/mint:
     post:
       summary: Mint a Resource
+  /projects/{projectId}/assembler-configs:
+    post:
+      summary: Create a New Assembler Config
+  /projects/{projectId}/assembler-configs/{configId}/traits:
+    post:
+      summary: Add Traits to an Assembler Config
   /projects/{projectId}/character-models:
     get:
       summary: Get Character Models
     post:
       summary: Create a New Character Model
+  /projects/{projectId}/character-models/{modelId}/tree:
+    post:
+      summary: Create a Character Tree for a Character Model
 ```

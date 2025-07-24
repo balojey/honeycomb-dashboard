@@ -10,5 +10,6 @@ The project will be built using a standard, high-quality monorepo starter templa
 
 | Date | Version | Description | Author |
 | --- | --- | --- | --- |
+| 2025-07-24 | 1.2 | Added Assembler Config and Character Tree workflows. | Sarah, PO |
 | 2025-07-23 | 1.1 | Added resource tree creation workflow for LedgerState resources. | Sarah, PO |
 | 2025-07-22 | 1.0 | Initial architecture draft | Winston, Architect |

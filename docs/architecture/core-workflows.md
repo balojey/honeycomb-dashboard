@@ -30,3 +30,47 @@ sequenceDiagram
         HPL_API-->>Frontend: Confirmation
     end
 ```
+
+## Create New Character Model Workflow
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Frontend
+    participant BFF
+    participant HPL_API as Honeycomb API
+
+    alt Assembled Character Path
+        User->>Frontend: Fills "Create Assembler Config" form
+        Frontend->>BFF: POST /api/.../assembler-configs
+        BFF->>HPL_API: createCreateAssemblerConfigTransaction(...)
+        HPL_API-->>BFF: tx
+        BFF-->>Frontend: tx
+        User->>Frontend: Signs tx, submits
+        Frontend-->>User: Confirmation
+
+        User->>Frontend: Fills "Add Traits" form
+        Frontend->>BFF: POST /api/.../assembler-configs/{id}/traits
+        BFF->>HPL_API: createAddCharacterTraitsTransactions(...)
+        HPL_API-->>BFF: tx
+        BFF-->>Frontend: tx
+        User->>Frontend: Signs tx, submits
+        Frontend-->>User: Confirmation
+    end
+
+    User->>Frontend: Fills "Create Character Model" form (Wrapped or Assembled)
+    Frontend->>BFF: POST /api/.../character-models
+    BFF->>HPL_API: createCreateCharacterModelTransaction(...)
+    HPL_API-->>BFF: tx
+    BFF-->>Frontend: tx
+    User->>Frontend: Signs tx, submits
+    Frontend-->>User: Confirmation for Model
+
+    User->>Frontend: Clicks "Create Character Tree"
+    Frontend->>BFF: POST /api/.../character-models/{id}/tree
+    BFF->>HPL_API: createCreateCharactersTreeTransaction(...)
+    HPL_API-->>BFF: tx
+    BFF-->>Frontend: tx
+    User->>Frontend: Signs tx, submits
+    Frontend-->>User: Confirmation for Tree
+```

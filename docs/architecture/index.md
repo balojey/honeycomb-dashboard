@@ -28,6 +28,7 @@
   - [External APIs](./external-apis.md)
   - [Core Workflows](./core-workflows.md)
     - [Create New Resource Workflow](./core-workflows.md#create-new-resource-workflow)
+    - [Create New Character Model Workflow](./core-workflows.md#create-new-character-model-workflow)
   - [Database Schema](./database-schema.md)
   - [Frontend Architecture](./frontend-architecture.md)
   - [Backend Architecture](./backend-architecture.md)

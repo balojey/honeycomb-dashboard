@@ -12,6 +12,7 @@ The project will be built using a standard, high-quality monorepo starter templa
 
 | Date | Version | Description | Author |
 | --- | --- | --- | --- |
+| 2025-07-24 | 1.2 | Added Assembler Config and Character Tree workflows. | Sarah, PO |
 | 2025-07-23 | 1.1 | Added resource tree creation workflow for LedgerState resources. | Sarah, PO |
 | 2025-07-22 | 1.0 | Initial architecture draft | Winston, Architect |
 
@@ -192,11 +193,20 @@ paths:
   /projects/{projectId}/resources/{resourceId}/mint:
     post:
       summary: Mint a Resource
+  /projects/{projectId}/assembler-configs:
+    post:
+      summary: Create a New Assembler Config
+  /projects/{projectId}/assembler-configs/{configId}/traits:
+    post:
+      summary: Add Traits to an Assembler Config
   /projects/{projectId}/character-models:
     get:
       summary: Get Character Models
     post:
       summary: Create a New Character Model
+  /projects/{projectId}/character-models/{modelId}/tree:
+    post:
+      summary: Create a Character Tree for a Character Model
 ```
 
 ## Components
@@ -249,6 +259,50 @@ sequenceDiagram
         Frontend->>HPL_API: Submits signed transaction
         HPL_API-->>Frontend: Confirmation
     end
+```
+
+### Create New Character Model Workflow
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Frontend
+    participant BFF
+    participant HPL_API as Honeycomb API
+
+    alt Assembled Character Path
+        User->>Frontend: Fills "Create Assembler Config" form
+        Frontend->>BFF: POST /api/.../assembler-configs
+        BFF->>HPL_API: createCreateAssemblerConfigTransaction(...)
+        HPL_API-->>BFF: tx
+        BFF-->>Frontend: tx
+        User->>Frontend: Signs tx, submits
+        Frontend-->>User: Confirmation
+
+        User->>Frontend: Fills "Add Traits" form
+        Frontend->>BFF: POST /api/.../assembler-configs/{id}/traits
+        BFF->>HPL_API: createAddCharacterTraitsTransactions(...)
+        HPL_API-->>BFF: tx
+        BFF-->>Frontend: tx
+        User->>Frontend: Signs tx, submits
+        Frontend-->>User: Confirmation
+    end
+
+    User->>Frontend: Fills "Create Character Model" form (Wrapped or Assembled)
+    Frontend->>BFF: POST /api/.../character-models
+    BFF->>HPL_API: createCreateCharacterModelTransaction(...)
+    HPL_API-->>BFF: tx
+    BFF-->>Frontend: tx
+    User->>Frontend: Signs tx, submits
+    Frontend-->>User: Confirmation for Model
+
+    User->>Frontend: Clicks "Create Character Tree"
+    Frontend->>BFF: POST /api/.../character-models/{id}/tree
+    BFF->>HPL_API: createCreateCharactersTreeTransaction(...)
+    HPL_API-->>BFF: tx
+    BFF-->>Frontend: tx
+    User->>Frontend: Signs tx, submits
+    Frontend-->>User: Confirmation for Tree
 ```
 
 ## Database Schema
