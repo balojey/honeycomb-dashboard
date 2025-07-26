@@ -4,6 +4,38 @@ import type { Context } from 'hono';
 const API_URL = "https://edge.test.honeycombprotocol.com/";
 const client = createEdgeClient(API_URL, true);
 
+// GET /api/projects/:projectId/character-models
+export const getCharacterModels = async (c: Context) => {
+  try {
+    const { projectId } = c.req.param();
+    
+    // Validate required fields
+    if (!projectId) {
+      return c.json({ message: 'projectId is required' }, 400);
+    }
+    
+    // Fetch character models using the Honeycomb API client
+    const { characterModel: characterModels } = await client.findCharacterModels({
+      project: projectId
+    });
+    
+    // Transform the data for the frontend
+    const transformedModels = characterModels.map(model => ({
+      address: model.address,
+      kind: model.config.__typename
+    }));
+    
+    // Return the transformed data to the frontend
+    return c.json(transformedModels);
+  } catch (error) {
+    console.error('Error fetching character models:', error);
+    return c.json({ 
+      message: 'Failed to fetch character models',
+      error: error instanceof Error ? error.message : 'Unknown error'
+    }, 500);
+  }
+};
+
 // POST /api/projects/:projectId/character-models
 export const createCharacterModel = async (c: Context) => {
   try {
