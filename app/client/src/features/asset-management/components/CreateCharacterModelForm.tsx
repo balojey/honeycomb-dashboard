@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Textarea } from '@/components/ui/textarea';
+import { CreateCharacterTreeForm } from './CreateCharacterTreeForm';
 
 interface Criteria {
   kind: 'MerkleTree' | 'Collection' | 'Creator';
@@ -38,7 +39,7 @@ interface CharacterModelFormData {
 
 interface CreateCharacterModelFormProps {
   projectId: string;
-  onSuccess: () => void;
+  onSuccess: (modelId?: string) => void;
   onCancel: () => void;
 }
 
@@ -72,6 +73,10 @@ export const CreateCharacterModelForm: React.FC<CreateCharacterModelFormProps> =
   
   // State for adding new creators
   const [newCreator, setNewCreator] = useState<Creator>({ address: '', share: 0 });
+  
+  // State for showing the create tree form
+  const [showCreateTreeForm, setShowCreateTreeForm] = useState(false);
+  const [createdModelId, setCreatedModelId] = useState('');
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
@@ -240,7 +245,14 @@ export const CreateCharacterModelForm: React.FC<CreateCharacterModelFormProps> =
       await connection.confirmTransaction(signature, 'confirmed');
       
       toast.success('Character model created successfully!');
-      onSuccess();
+      
+      // Set the model ID (in a real implementation, this would come from the response)
+      // For now we'll use a placeholder
+      const modelId = 'placeholder-model-id';
+      setCreatedModelId(modelId);
+      
+      // Show the create tree form
+      setShowCreateTreeForm(true);
     } catch (error) {
       console.error('Error creating character model:', error);
       toast.error(`Failed to create character model: ${(error as Error).message}`);
@@ -248,6 +260,31 @@ export const CreateCharacterModelForm: React.FC<CreateCharacterModelFormProps> =
       setIsSubmitting(false);
     }
   };
+
+  // Handle successful tree creation
+  const handleTreeSuccess = (treeAddress: string) => {
+    toast.success(`Character tree created successfully! Address: ${treeAddress}`);
+    setShowCreateTreeForm(false);
+    onSuccess(createdModelId);
+  };
+
+  // Handle canceling tree creation
+  const handleTreeCancel = () => {
+    setShowCreateTreeForm(false);
+    onSuccess(createdModelId);
+  };
+
+  // If showCreateTreeForm is true, render the CreateCharacterTreeForm instead
+  if (showCreateTreeForm) {
+    return (
+      <CreateCharacterTreeForm
+        projectId={projectId}
+        modelId={createdModelId}
+        onSuccess={handleTreeSuccess}
+        onCancel={handleTreeCancel}
+      />
+    );
+  }
 
   return (
     <Card className="w-full max-w-2xl">

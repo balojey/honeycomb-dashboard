@@ -8,6 +8,14 @@ export const CharacterModelListPage: React.FC<CharacterModelListPageProps> = () 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const projectAddress = window.location.pathname.split('/')[2]; // Extract project address from URL
 
+  // Handler for when character model creation is successful
+  const handleModelCreated = (modelId?: string) => {
+    setIsCreateModalOpen(false);
+    // TODO: Refresh character models when they are implemented
+    // If a modelId is provided, you might want to do something with it
+    console.log('Character model created with ID:', modelId);
+  };
+
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
@@ -27,10 +35,7 @@ export const CharacterModelListPage: React.FC<CharacterModelListPageProps> = () 
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <CreateCharacterModelForm
             projectId={projectAddress}
-            onSuccess={() => {
-              setIsCreateModalOpen(false);
-              // TODO: Refresh character models when they are implemented
-            }}
+            onSuccess={handleModelCreated}
             onCancel={() => setIsCreateModalOpen(false)}
           />
         </div>

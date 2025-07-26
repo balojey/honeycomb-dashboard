@@ -180,3 +180,98 @@ export const createCharacterModel = async (c: Context) => {
     }, 500);
   }
 };
+
+// POST /api/projects/:projectId/character-models/:modelId/tree
+export const createCharacterTree = async (c: Context) => {
+  try {
+    const { projectId, modelId } = c.req.param();
+    const { treeConfig, authority, payer, lutAddresses, computeUnitPrice } = await c.req.json();
+    
+    // Validate required fields
+    if (!projectId) {
+      return c.json({ message: 'projectId is required' }, 400);
+    }
+    
+    if (!modelId) {
+      return c.json({ message: 'modelId is required' }, 400);
+    }
+    
+    if (!authority) {
+      return c.json({ message: 'authority is required' }, 400);
+    }
+    
+    if (!treeConfig) {
+      return c.json({ message: 'treeConfig is required' }, 400);
+    }
+    
+    // Validate treeConfig has either basic or advanced configuration
+    if (!treeConfig.basic && !treeConfig.advanced) {
+      return c.json({ 
+        message: 'treeConfig must include either basic or advanced configuration' 
+      }, 400);
+    }
+    
+    if (treeConfig.basic && treeConfig.advanced) {
+      return c.json({ 
+        message: 'treeConfig cannot include both basic and advanced configurations' 
+      }, 400);
+    }
+    
+    // Validate basic config if provided
+    if (treeConfig.basic) {
+      if (!treeConfig.basic.numAssets || treeConfig.basic.numAssets <= 0) {
+        return c.json({ 
+          message: 'basic.numAssets must be a positive number' 
+        }, 400);
+      }
+    }
+    
+    // Validate advanced config if provided
+    if (treeConfig.advanced) {
+      const { maxDepth, maxBufferSize, canopyDepth } = treeConfig.advanced;
+      
+      if (!maxDepth || maxDepth <= 0) {
+        return c.json({ 
+          message: 'advanced.maxDepth must be a positive number' 
+        }, 400);
+      }
+      
+      if (!maxBufferSize || maxBufferSize <= 0) {
+        return c.json({ 
+          message: 'advanced.maxBufferSize must be a positive number' 
+        }, 400);
+      }
+      
+      if (canopyDepth === undefined || canopyDepth < 0) {
+        return c.json({ 
+          message: 'advanced.canopyDepth must be a non-negative number' 
+        }, 400);
+      }
+    }
+    
+    // Create the transaction using the Honeycomb API client
+    const { createCreateCharactersTreeTransaction: 
+      { tx: transaction, treeAddress }
+     } = await client.createCreateCharactersTreeTransaction({
+      project: projectId,
+      characterModel: modelId,
+      authority,
+      treeConfig,
+      payer: payer || authority, // Default to authority if not provided
+      lutAddresses,
+      computeUnitPrice
+    });
+    
+    // Return the serialized transaction and tree address to the frontend
+    return c.json({ 
+      transaction: transaction,
+      treeAddress: treeAddress
+    });
+  } catch (error) {
+    console.error('Error creating character tree transaction:', error);
+    return c.json({ 
+      message: 'Failed to create character tree transaction',
+      error: error instanceof Error ? error.message : 'Unknown error'
+    }, 500);
+  }
+};

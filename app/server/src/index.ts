@@ -5,7 +5,7 @@ import { fetchProjects, createCreateProjectTransaction, fetchProfilesForProject,
 import { PublicKey } from '@solana/web3.js'
 import type { CreateResourceRequest, CreateResourceResponse } from 'shared/dist'
 import { createAssemblerConfig, addCharacterTraits } from './routes/assemblerConfigs'
-import { createCharacterModel } from './routes/characterModels'
+import { createCharacterModel, createCharacterTree } from './routes/characterModels'
 
 const app = new Hono()
 
@@ -194,5 +194,8 @@ app.post('/api/projects/:projectId/assembler-configs/:configId/traits', addChara
 
 // Route for creating character models
 app.post('/api/projects/:projectId/character-models', createCharacterModel);
+
+// Route for creating character trees
+app.post('/api/projects/:projectId/character-models/:modelId/tree', createCharacterTree);
 
 export default app
