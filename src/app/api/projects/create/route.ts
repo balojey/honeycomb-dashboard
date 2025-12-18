@@ -20,6 +20,7 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+    console.log(`{${name} ${authorityPublicKey} ${payerPublicKey}}`)
 
     // Create the project transaction using Honeycomb client
     const {
@@ -36,6 +37,7 @@ export async function POST(request: NextRequest) {
         customDataFields: customDataFields || [],
       },
     });
+    console.log("here!")
 
     // Return the transaction response to frontend for signing
     return NextResponse.json({
@@ -54,8 +56,16 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Error creating project transaction:', error);
+    
+    // Check if it's a network error from Honeycomb API
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const isNetworkError = errorMessage.includes('Bad Gateway') || errorMessage.includes('Network');
+    
     return NextResponse.json(
-      { error: 'Failed to create project transaction' },
+      { 
+        error: 'Failed to create project transaction',
+        details: isNetworkError ? 'Honeycomb API is currently unavailable' : errorMessage
+      },
       { status: 500 }
     );
   }

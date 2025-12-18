@@ -13,10 +13,10 @@ export default function ProjectDashboard() {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-6xl mx-auto px-4">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-black mb-2">
             Honeycomb Protocol Dashboard
           </h1>
-          <p className="text-gray-600">
+          <p className="text-black">
             Create and manage your Honeycomb Protocol projects
           </p>
         </div>
@@ -28,8 +28,8 @@ export default function ProjectDashboard() {
               onClick={() => setActiveTab('list')}
               className={`px-6 py-2 rounded-md font-medium transition-colors ${
                 activeTab === 'list'
-                  ? 'bg-blue-500 text-white'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'bg-blue-500 text-white shadow-sm'
+                  : 'text-black hover:text-black hover:bg-gray-50'
               }`}
             >
               My Projects
@@ -38,8 +38,8 @@ export default function ProjectDashboard() {
               onClick={() => setActiveTab('create')}
               className={`px-6 py-2 rounded-md font-medium transition-colors ${
                 activeTab === 'create'
-                  ? 'bg-blue-500 text-white'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'bg-blue-500 text-white shadow-sm'
+                  : 'text-black hover:text-black hover:bg-gray-50'
               }`}
             >
               Create Project

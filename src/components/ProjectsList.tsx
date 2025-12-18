@@ -74,8 +74,8 @@ export default function ProjectsList() {
 
   if (!walletRecord?.address) {
     return (
-      <div className="p-6 bg-gray-50 border border-gray-200 rounded-lg">
-        <p className="text-gray-600">Connect your wallet to view your projects.</p>
+      <div className="p-6 bg-white border border-gray-200 rounded-lg">
+        <p className="text-black">Connect your wallet to view your projects.</p>
       </div>
     );
   }
@@ -112,7 +112,7 @@ export default function ProjectsList() {
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Your Honeycomb Projects</h2>
+        <h2 className="text-2xl font-bold text-black">Your Honeycomb Projects</h2>
         <button
           onClick={fetchProjects}
           className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
@@ -123,38 +123,38 @@ export default function ProjectsList() {
 
       {projects.length === 0 ? (
         <div className="text-center py-8">
-          <p className="text-gray-600 mb-4">You haven't created any projects yet.</p>
-          <p className="text-sm text-gray-500">Create your first Honeycomb project to get started!</p>
+          <p className="text-black mb-4">You haven't created any projects yet.</p>
+          <p className="text-sm text-black">Create your first Honeycomb project to get started!</p>
         </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {projects.map((project) => (
             <div key={project.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-              <h3 className="text-lg font-semibold mb-2">{project.name}</h3>
+              <h3 className="text-lg font-semibold mb-2 text-black">{project.name}</h3>
               
               <div className="space-y-2 text-sm">
                 <div>
-                  <span className="font-medium text-gray-700">Address:</span>
-                  <p className="text-gray-600 break-all font-mono text-xs">
+                  <span className="font-medium text-black">Address:</span>
+                  <p className="text-black break-all font-mono text-xs">
                     {project.project_address}
                   </p>
                 </div>
                 
                 <div>
-                  <span className="font-medium text-gray-700">Authority:</span>
-                  <p className="text-gray-600 break-all font-mono text-xs">
+                  <span className="font-medium text-black">Authority:</span>
+                  <p className="text-black break-all font-mono text-xs">
                     {project.authority_public_key}
                   </p>
                 </div>
 
                 {project.achievements.length > 0 && (
                   <div>
-                    <span className="font-medium text-gray-700">Achievements:</span>
+                    <span className="font-medium text-black">Achievements:</span>
                     <div className="flex flex-wrap gap-1 mt-1">
                       {project.achievements.map((achievement, index) => (
                         <span
                           key={index}
-                          className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full"
+                          className="px-2 py-1 bg-blue-100 text-black text-xs rounded-full"
                         >
                           {achievement}
                         </span>
@@ -165,12 +165,12 @@ export default function ProjectsList() {
 
                 {project.custom_data_fields.length > 0 && (
                   <div>
-                    <span className="font-medium text-gray-700">Custom Fields:</span>
+                    <span className="font-medium text-black">Custom Fields:</span>
                     <div className="flex flex-wrap gap-1 mt-1">
                       {project.custom_data_fields.map((field, index) => (
                         <span
                           key={index}
-                          className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full"
+                          className="px-2 py-1 bg-green-100 text-black text-xs rounded-full"
                         >
                           {field}
                         </span>
@@ -180,8 +180,8 @@ export default function ProjectsList() {
                 )}
 
                 <div>
-                  <span className="font-medium text-gray-700">Created:</span>
-                  <p className="text-gray-600">
+                  <span className="font-medium text-black">Created:</span>
+                  <p className="text-black">
                     {new Date(project.created_at).toLocaleDateString()}
                   </p>
                 </div>

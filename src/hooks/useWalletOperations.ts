@@ -6,7 +6,7 @@ import { useCallback } from 'react';
 
 export function useWalletOperations() {
   const { connection } = useConnection();
-  const { publicKey, sendTransaction } = useWallet();
+  const { publicKey, sendTransaction, disconnect } = useWallet();
 
   const getBalance = useCallback(async () => {
     if (!publicKey) return null;
@@ -52,5 +52,6 @@ export function useWalletOperations() {
     sendSol,
     publicKey,
     connected: !!publicKey,
+    disconnect,
   };
 }

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useWalletOperations } from '@/hooks/useWalletOperations';
+import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { Button } from './ui/button';
 import {
   DropdownMenu,
@@ -12,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import WalletDashboard from './WalletDashboard';
-import { ChevronDown, Wallet, User, LogOut } from 'lucide-react';
+import { ChevronDown, Wallet, User, LogOut, Plus } from 'lucide-react';
 
 export default function Header() {
   const { connected, publicKey, disconnect } = useWalletOperations();
@@ -43,7 +44,7 @@ export default function Header() {
                     <div className="w-6 h-6 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
                       <Wallet className="w-3 h-3 text-white" />
                     </div>
-                    <span className="hidden sm:inline text-sm font-medium">
+                    <span className="hidden sm:inline text-sm font-medium text-gray-900 dark:text-white">
                       {publicKey.toString().slice(0, 4)}...{publicKey.toString().slice(-4)}
                     </span>
                     <ChevronDown className="w-4 h-4" />
@@ -82,10 +83,47 @@ export default function Header() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <div className="flex items-center space-x-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
-                <Wallet className="w-4 h-4 text-gray-500" />
-                <span className="text-sm text-gray-500">Not Connected</span>
-              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    variant="outline" 
+                    className="flex items-center space-x-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700"
+                  >
+                    <Wallet className="w-4 h-4 text-gray-500" />
+                    <span className="text-sm text-gray-500">Not Connected</span>
+                    <ChevronDown className="w-4 h-4 text-gray-500" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-80 p-0">
+                  <DropdownMenuLabel className="px-4 py-3 border-b border-gray-100 dark:border-gray-800">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                        <Wallet className="w-5 h-5 text-gray-500" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">Wallet Connection</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          Connect your wallet to get started
+                        </p>
+                      </div>
+                    </div>
+                  </DropdownMenuLabel>
+                  
+                  <div className="p-4">
+                    <div className="flex flex-col items-center space-y-4">
+                      <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                        <Plus className="w-8 h-8 text-gray-400" />
+                      </div>
+                      <p className="text-sm text-gray-600 dark:text-gray-300 text-center">
+                        Choose a wallet to connect to Honeycomb
+                      </p>
+                      <div className="w-full">
+                        <WalletMultiButton className="!w-full !bg-gradient-to-r !from-purple-600 !to-blue-600 hover:!from-purple-700 hover:!to-blue-700 !rounded-lg !py-3 !text-sm !font-medium" />
+                      </div>
+                    </div>
+                  </div>
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
           </div>
         </div>

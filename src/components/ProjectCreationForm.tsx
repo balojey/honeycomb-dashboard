@@ -10,8 +10,6 @@ import { Plus, Trash2, Rocket, AlertCircle, CheckCircle2, Wallet } from 'lucide-
 
 interface ProjectFormData {
   name: string;
-  authorityPublicKey: string;
-  payerPublicKey: string;
   achievements: string[];
   customDataFields: string[];
 }
@@ -34,8 +32,6 @@ export default function ProjectCreationForm() {
   const { walletRecord } = useWalletAddress();
   const [formData, setFormData] = useState<ProjectFormData>({
     name: '',
-    authorityPublicKey: '',
-    payerPublicKey: '',
     achievements: [''],
     customDataFields: [''],
   });
@@ -96,6 +92,8 @@ export default function ProjectCreationForm() {
         },
         body: JSON.stringify({
           ...formData,
+          authorityPublicKey: walletRecord.address,
+          payerPublicKey: walletRecord.address,
           achievements: cleanedAchievements,
           customDataFields: cleanedCustomDataFields,
           walletAddress: walletRecord.address,
@@ -139,8 +137,6 @@ export default function ProjectCreationForm() {
       // Reset form
       setFormData({
         name: '',
-        authorityPublicKey: '',
-        payerPublicKey: '',
         achievements: [''],
         customDataFields: [''],
       });
@@ -159,10 +155,10 @@ export default function ProjectCreationForm() {
           <div className="flex items-center justify-center space-x-3 p-8 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
             <Wallet className="w-8 h-8 text-amber-600 dark:text-amber-400" />
             <div className="text-center">
-              <h3 className="text-lg font-semibold text-amber-900 dark:text-amber-100 mb-1">
+              <h3 className="text-lg font-semibold text-black mb-1">
                 Wallet Required
               </h3>
-              <p className="text-amber-700 dark:text-amber-300">
+              <p className="text-black">
                 Please connect your wallet to create a project
               </p>
             </div>
@@ -179,8 +175,8 @@ export default function ProjectCreationForm() {
           <div className="mx-auto w-12 h-12 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center mb-4">
             <Rocket className="w-6 h-6 text-white" />
           </div>
-          <CardTitle className="text-2xl">Create Honeycomb Project</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-2xl text-black">Create Honeycomb Project</CardTitle>
+          <CardDescription className="text-black">
             Set up a new project on the Honeycomb Protocol with custom achievements and data fields
           </CardDescription>
         </CardHeader>
@@ -189,57 +185,40 @@ export default function ProjectCreationForm() {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Project Name */}
             <div className="space-y-2">
-              <Label htmlFor="name">Project Name *</Label>
+              <Label htmlFor="name" className="text-black">Project Name *</Label>
               <Input
                 id="name"
                 value={formData.name}
                 onChange={(e) => handleInputChange('name', e.target.value)}
                 placeholder="Enter your project name"
+                className="text-black"
                 required
               />
             </div>
 
-            {/* Authority Public Key */}
+            {/* Connected Wallet Info */}
             <div className="space-y-2">
-              <Label htmlFor="authorityPublicKey">Authority Public Key *</Label>
-              <Input
-                id="authorityPublicKey"
-                value={formData.authorityPublicKey}
-                onChange={(e) => handleInputChange('authorityPublicKey', e.target.value)}
-                placeholder="Public key of the project authority"
-                className="font-mono text-sm"
-                required
-              />
-              <p className="text-xs text-muted-foreground">
-                The wallet address that will have authority over this project
-              </p>
-            </div>
-
-            {/* Payer Public Key */}
-            <div className="space-y-2">
-              <Label htmlFor="payerPublicKey">Payer Public Key (Optional)</Label>
-              <Input
-                id="payerPublicKey"
-                value={formData.payerPublicKey}
-                onChange={(e) => handleInputChange('payerPublicKey', e.target.value)}
-                placeholder="Public key of the transaction payer"
-                className="font-mono text-sm"
-              />
-              <p className="text-xs text-muted-foreground">
-                Leave empty to use the authority as the payer
-              </p>
+              <Label className="text-black">Connected Wallet</Label>
+              <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border">
+                <p className="font-mono text-sm text-black break-all">
+                  {walletRecord.address}
+                </p>
+                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                  This wallet will be used as both the project authority and transaction payer
+                </p>
+              </div>
             </div>
 
             {/* Achievements */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <Label>Achievements</Label>
+                <Label className="text-black">Achievements</Label>
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
                   onClick={() => addArrayItem('achievements')}
-                  className="flex items-center space-x-1"
+                  className="flex items-center space-x-1 text-black"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Add Achievement</span>
@@ -253,7 +232,7 @@ export default function ProjectCreationForm() {
                       value={achievement}
                       onChange={(e) => handleArrayChange('achievements', index, e.target.value)}
                       placeholder={`Achievement ${index + 1}`}
-                      className="flex-1"
+                      className="flex-1 text-black"
                     />
                     {formData.achievements.length > 1 && (
                       <Button
@@ -274,13 +253,13 @@ export default function ProjectCreationForm() {
             {/* Custom Data Fields */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <Label>Custom Data Fields</Label>
+                <Label className="text-black">Custom Data Fields</Label>
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
                   onClick={() => addArrayItem('customDataFields')}
-                  className="flex items-center space-x-1"
+                  className="flex items-center space-x-1 text-black"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Add Field</span>
@@ -294,7 +273,7 @@ export default function ProjectCreationForm() {
                       value={field}
                       onChange={(e) => handleArrayChange('customDataFields', index, e.target.value)}
                       placeholder={`Custom field ${index + 1}`}
-                      className="flex-1"
+                      className="flex-1 text-black"
                     />
                     {formData.customDataFields.length > 1 && (
                       <Button
@@ -342,10 +321,10 @@ export default function ProjectCreationForm() {
             <div className="flex items-start space-x-3 p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
               <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
               <div>
-                <h4 className="text-sm font-medium text-red-900 dark:text-red-100 mb-1">
+                <h4 className="text-sm font-medium text-black mb-1">
                   Error Creating Project
                 </h4>
-                <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
+                <p className="text-sm text-black">{error}</p>
               </div>
             </div>
           </CardContent>
@@ -359,10 +338,10 @@ export default function ProjectCreationForm() {
             <div className="flex items-start space-x-3 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
               <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
               <div>
-                <h4 className="text-sm font-medium text-green-900 dark:text-green-100 mb-1">
+                <h4 className="text-sm font-medium text-black mb-1">
                   Project Created Successfully!
                 </h4>
-                <p className="text-sm text-green-700 dark:text-green-300">{success}</p>
+                <p className="text-sm text-black">{success}</p>
               </div>
             </div>
           </CardContent>
